@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>JPatterns</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+    <!-- Bootstrap Icons-->
+    <link href="../css/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Google fonts-->
+    <link href="../css/font/merriweathersans.css" rel="stylesheet" />
+    <link href="../css/font/merriweather.css" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="../css/styles.css" rel="stylesheet" />
+</head>
+<body id="page-top">
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg shadow p-3 fixed-top py-3" id="secondaryNavBar" style="background-color: #655a53; color: #cac6c4">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="#page-top">JPattern</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                <li class="nav-item"><a class="nav-link" href="../index.html#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="../index.html#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="./shirt-pattern.html">Body</a></li>
+                <li class="nav-item"><a class="nav-link" href="./skirt-pattern.html"  style="color: #f4623a !important">Skirt</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Pants</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Trousers -->
+<div class="pattern-page" id="trousers-page"></div>
+<section class="page-section" id="pants">
+    <br><br>
+    <div class="container px-2 px-lg-3">
+        <h2 class="text-center mt-0">Basic Pants</h2>
+        <hr class="divider" />
+        <div class="row p-3">
+            <span class="text-primary fs-7">(*) Because the size at which the pattern will be generated is related to the print measurements, select both the unit of measurement (millimeters or inches) and the print size.</span>
+        </div>
+        <div class="row px-3">
+            <span class="text-primary fs-7">(**) Test data can be uploaded, by clicking the "Load Example" button. This action depends on the metric unit selected.</span>
+        </div>
+        <div class="row py-3">
+            <div class="col-auto mb-2">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="checkUnitsTrousers" onclick="setMeasurementUnit('Trousers')" checked>
+                    <input type="hidden" id="unitsTrousers" value="mm">
+                    <label class="form-check-label" for="checkUnitsTrousers">Measurement units <span class="text-primary" id="unitsTxtTrousers">(millimeters)</span></label>
+                </div>
+                <div class="col-auto mb-2">
+                    <i class="bi bi-printer fs-4 text-primary"></i>
+                    <label for="zoomTrousers"></label>
+                    <select id="zoomTrousers" onchange="clearDrawing('Trousers')">
+                        <option value="1">100%</option>
+                        <option value="2">50%</option>
+                        <option value="4" selected>25%</option>
+                    </select>
+                    <span class="px-1">Print Size</span>
+                </div>
+            </div>
+        </div>
+        <form id="formTrousers" class="was-validated">
+            <div class="row">
+                <div class="col-lg-4 col-sm-6">
+                    <div class="mb-3">
+                        <label for="cadera" class="form-label">Low Hip</label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-block rounded-pill fw-bolder" data-bs-toggle="modal" data-bs-target="#infoModal" data-bs-case="cadera">?</button>
+                        <input type="text" class="form-control" id="cadera" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cintura-cadera" class="form-label">Waist to Hip</label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-block rounded-pill fw-bolder" data-bs-toggle="modal" data-bs-target="#infoModal" data-bs-case="cintura-cadera">?</button>
+                        <input type="text" class="form-control" id="cintura-cadera" required>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <div class="mb-3">
+                        <label for="largo-pierna" class="form-label">Leg Length </label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-block rounded-pill fw-bolder" data-bs-toggle="modal" data-bs-target="#infoModal" data-bs-case="largo-pierna">?</button>
+                        <input type="text" class="form-control" id="largo-pierna" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="altura-rodilla" class="form-label">Ankle to Knee</label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-block rounded-pill fw-bolder" data-bs-toggle="modal" data-bs-target="#infoModal" data-bs-case="altura-rodilla">?</button>
+                        <input type="text" class="form-control" id="altura-rodilla" required>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <div class="mb-3">
+                        <label for="altura-cintura" class="form-label">Height to hip</label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-block rounded-pill fw-bolder" data-bs-toggle="modal" data-bs-target="#infoModal" data-bs-case="altura-cintura">?</button>
+                        <input type="text" class="form-control" id="altura-cintura" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="altura-entrepierna" class="form-label">Inseam</label>
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-block rounded-pill fw-bolder" data-bs-toggle="modal" data-bs-target="#infoModal" data-bs-case="altura-entrepierna">?</button>
+                        <input type="text" class="form-control" id="altura-entrepierna" required>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row mt-2">
+            <div class="col-auto  mb-2">
+                <input class="btn btn-primary" type="button" value="Build Pattern" onclick="draw('Trousers')">
+            </div>
+            <div class="col-auto  mb-2">
+                <input class="btn btn-outline-secondary" type="button" value="Download Pattern" id="btn-download_trousers" onclick="downloadImage('Trousers')">
+            </div>
+            <div class="col-auto mb-2">
+                <input class="btn btn-outline-success" type="button" value="Load Example" id="btn-load_skirt" onclick="loadExample('Trousers')">
+            </div>
+        </div>
+        <div class="col" id="divCanvasTrousers">
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <td>
+                            <canvas id="canvasTrousers" width="0" height="0">
+                                Your browser does not support the HTML canvas tag.</canvas>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Modal INFO about measurements -->
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h4 class="modal-title" id="alertModalLabel"><i class="bi bi-exclamation-triangle px-2"></i>Attention!</h4>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="alertBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer-->
+<footer class="bg-light py-5">
+    <div class="container px-4 px-lg-5"><div class="small text-center text-muted">Copyright &copy; 2023 - Julio César Quijada Jiménez</div></div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="../js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="../js/scripts.js"></script>
+<!-- JPatterns -->
+<script src="../js/jpattern.js"></script>
+<script src="../js/utilities.js"></script>
+<script src="../js/pattern-trousers.js"></script>
+<script src="../js/patterns-pages.js"></script>
+</body>
+</html>
