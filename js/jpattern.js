@@ -2,7 +2,7 @@
 
 
 /**
- * Un punto por defecto tiene su origen en el origen de coordenadas
+ * A point by default has its origin at the coordinate origin
  */
 function Point(x, y, name) {
     'use strict';
@@ -35,7 +35,7 @@ function Point(x, y, name) {
 
 
 /**
- * Forma de dibujar una línea dado un ángulo. Referencia:
+ * Way to draw a line given an angle. Reference:
  * @author Floris (https://stackoverflow.com/users/1967396/floris)
  * https://stackoverflow.com/questions/23598547/draw-a-line-from-x-y-with-a-given-angle-and-length
  */
@@ -78,8 +78,7 @@ function Line(arg0, arg1, arg2, arg3) {
         const x2 = x1 + r * Math.cos(Math.PI * theta / 180.0);
         const y2 = y1 + r * Math.sin(Math.PI * theta / 180.0);
 
-        const resultPoint = new Point(x2, y2);
-        return resultPoint;
+        return new Point(x2, y2);
     };
 
 
@@ -107,7 +106,7 @@ function Line(arg0, arg1, arg2, arg3) {
     };
 
 
-    // Cálculos de los elementos que me faltan
+    // Calculations of missing elements
     if (endPoint === undefined) {
         const auxPoint = this.findEndPoint();
         endPoint = new Point(auxPoint.x, auxPoint.y);
@@ -124,17 +123,9 @@ function Line(arg0, arg1, arg2, arg3) {
         const c = this.getBeginPoint();
         const d = this.getEndPoint();
 
-        // Pendiente de la recta
+        // Slope of the line
         let m = (c.y - d.y) / (c.x - d.x);
         degrees = (Math.atan(m) * (180 / Math.PI));
-
-        if (m < 0) {
-            // degrees = 180 - degrees;
-            console.log('m: ' + m);
-            console.log('degrees: ' + degrees);
-            console.log('calculo:' + (180 - degrees));
-            console.log('degrees normalized: ' + normalizeDegree(degrees));
-        }
     }
 
     this.getClass = function () {
@@ -306,23 +297,18 @@ function Painter(canvasObj, zoom) {
     let myStylizerText = new ContextStylizerText(ctx);
     let myStylizerPoint = new ContextStylizerPoint(ctx);
 
-    // he convertido previamente a milímetros (si el usuario eligió pulgadas),
-    // es decir, sólo se trabaja con milímetros
+    // If the user selects inches as the unit of measurement, these are converted to millimeters
+    // before working, in this way we avoid having to do calculations to adjust the resolution
+    // of the pattern when printing it on a printer.
     ctx.setTransform(2.832 / zoom, 0, 0, 2.832 / zoom, 0, 0);
 
     this.clearAll = function () {
         // Prepare the canvas for paint
         ctx.clearRect(0, 0, canvasObj.width, canvasObj.height);
-
-        // We make a solid white background
-        // ctx.fillStyle = "#FFFFFF";
-        // ctx.fillRect(0, 0, canvasObj.width, canvasObj.height);
     };
 
     this.lineTo = function (point, style = '') {
         ctx.beginPath();
-
-        // const stylizer = new ContextStylizer(ctx, style);
 
         ctx.moveTo(lastPoint.x, lastPoint.y);
         ctx.lineTo(point.x, point.y);
@@ -443,8 +429,7 @@ function Painter(canvasObj, zoom) {
         let y = point.y;
 
         if (style.length !== 0) {
-            const stylizer = new ContextStylizerText(ctx, style);
-            myStylizerText = stylizer;
+            myStylizerText = new ContextStylizerText(ctx, style);
         }
 
         const width = myStylizerText.getLabelWidth(label);
@@ -462,14 +447,14 @@ function Painter(canvasObj, zoom) {
                 x = x - dist - width;
             }
 
-            // Corrección para que la etiqueta quede centrada con el punto
+            // Correction so that the label is centered with the point
             if (position.startsWith('t') || position.startsWith('b')) {
                 x = x - (width / 2);
             } else if (position.startsWith('r') || position.startsWith('l')) {
                 y = y + (height / 2);
             }
 
-            // Corrección para orientaciones compuestas, es decir: top-lef (tl), top-right (tr),
+            // Correction for compound orientations, that is: top-lef (tl), top-right (tr),
             // bottom-left(bl), bottom-right (br)
             if (position.length === 2) {
                 if (position.endsWith('l')) {
@@ -529,20 +514,21 @@ function Painter(canvasObj, zoom) {
         let styleAuxiliaryLine = 'color:#99afbf;width:1;lineCap:round';
         let styleLine = 'color:#f4623a;width:3;lineCap:round';
         let stylePoint = 'color:#99afbf';
-        let arrayOfPaintedPoints = new Array();
+        let arrayOfPaintedPoints = [];
         let beginPointLabel = '';
         let endPointLabel = '';
         let orientationDegrees = '';
         let orientationLine = '';
+        let logger = new Logger();
 
-        // Cada objeto puede estar formado por varios patrones.
-        // Ejem: en el caso de una falda hay un patrón delantero y otro trasero, pero para una
-        // camisa debemos incluir el patrón de la manga.
+        // Each object can be made up of several patterns.
+        // Example: in the case of a skirt there is a front pattern and a back pattern, but for a
+        // shirt we must include the sleeve pattern.
         for (let i = 0; i < allThatMustBeDrawn.length; i++) {
 
             for (const [key, value] of Object.entries(allThatMustBeDrawn[i])) {
-                console.log(key);
-                console.log(value.toString());
+                logger.debug(key);
+                logger.debug(value.toString());
                 if (value.getClass() === "Line") {
                     if (key.startsWith('dotted')) {
                         style = styleDottedLine;
@@ -556,16 +542,16 @@ function Painter(canvasObj, zoom) {
                     orientationDegrees = getOrientation(value.getDegrees());
                     orientationLine = getLineOrientation(value);
 
-                    console.log('point' + getBeginPointName(key) + ', ' + value.getBeginPoint());
-                    console.log('point' + getEndPointName(key) + ', ' + value.getEndPoint());
-                    console.log('degrees: ' + value.getDegrees());
-                    console.log('orientationDegrees: ' + orientationDegrees);
-                    console.log('orientationLine: ' + orientationLine);
+                    logger.debug('point' + getBeginPointName(key) + ', ' + value.getBeginPoint());
+                    logger.debug('point' + getEndPointName(key) + ', ' + value.getEndPoint());
+                    logger.debug('degrees: ' + value.getDegrees());
+                    logger.debug('orientationDegrees: ' + orientationDegrees);
+                    logger.debug('orientationLine: ' + orientationLine);
                     beginPointLabel = getBeginPointName(key);
                     endPointLabel = getEndPointName(key);
 
-                    // Se lleva la cuenta de los puntos (iniciales y finales) de una línea a los que se les ha etiquetado
-                    // Un punto que sale por primera vez, se etiqueta, si ya ha salido...no se le pone etiqueta
+                    // Keeps track of the points (starting and ending) of a line that have been labeled
+                    // A point that appears for the first time is labeled, if it has already appeared... it is not labeled
                     if (!arrayOfPaintedPoints.includes(beginPointLabel)) {
                         this.setLabelToPoint(beginPointLabel, value.getBeginPoint(), orientationLine, stylePoint);
                         arrayOfPaintedPoints.push(beginPointLabel);
@@ -582,7 +568,7 @@ function Painter(canvasObj, zoom) {
                     this.drawDart(value, styleLine);
                 } else if (value.getClass() === "Point") {
                     this.drawPoint(value, stylePoint);
-                    console.log(getPointName(key));
+                    logger.debug(getPointName(key));
                     let orientation = value.label.orientation;
                     let labelValue = value.label.value;
                     this.setLabelToPoint(labelValue, value, orientation);
@@ -800,7 +786,6 @@ function StylistHelper(styleStr = '') {
         str = str.concat('}');
         return str;
     };
-
-
 }
+
 

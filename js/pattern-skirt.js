@@ -1,24 +1,20 @@
 
 
-// Medidas secundarias. En la mayoría de patrones suelen ser medidas un tanto aleatorias, definidas
-// por los diseñadores tras años de experiencia y experimentación, que han sido definidas siguiendo
-// valores estéticos. ¿Cuanto de profunda debe de ser una pinza? En la mayoría de los casos esta medida
-// depende de la experiencia del sastre.
+// Secondary measures. In most patterns, they tend to be somewhat random measurements, defined
+// by the designers after years of experience and experimentation, which have been defined following
+// aesthetic values. How deep should a dart be? In most cases this measure depends on the tailor's experience.
 const SecondarySkirtMeasurements = {
-    ANCHO_PINZA: 30,
-    PROF_PINZA_DELANTERA: 120,
-    CAIDA_CINTURA: 20,
-    BAJADA_PINZA: 15,
-    PROF_PINZA_TRASERA: 105,
-    OFFSET_CURVA_CADERA: 5,
-    OFFSET_CURVA_CINTURA: -3,
+    DART_WIDTH: 30,
+    FRONT_DART_DEPTH: 120,
+    WAIST_DROP: 20,
+    LOWER_DART: 15,
+    REAR_DART_DEPTH: 105,
+    OFFSET_HIP_CURVE: 5,
+    OFFSET_CURVE_WAIST: -3,
 }
 
 Object.freeze(SecondarySkirtMeasurements);
 
-const visualAidFrontSkirtJSON = '{"data":{"points":{"style":"color:#B0C4DE","point":[{"label":"A","position":"t"},{"label":"B","position":"t"},{"label":"C","position":"t"},{"label":"D","position":"t"},{"label":"E","position":"r"},{"label":"F","position":"r"},{"label":"G","position":"l"},{"label":"H","position":"l"}]},"lines":{"style":"color:#B0C4DE;pattern:[4,2]","begin":"H","end":"E"}}}';
-
-Object.freeze(visualAidFrontSkirtJSON);
 
 class PatternBackSkirt {
     curveLine_I_J;
@@ -197,12 +193,12 @@ class Skirt {
     patternFrontSkirt;
     patternBackSkirt;
 
-    constructor(contornoCintura, contornoCadera, distCinturaCadera, largoFalda, distanciaSenos) {
-        this.contornoCintura = contornoCintura;
-        this.contornoCadera = contornoCadera;
-        this.distCinturaCadera = distCinturaCadera;
-        this.largoFalda = largoFalda;
-        this.distanciaSenos = distanciaSenos;
+    constructor(waist, lowHip, waistToHip, skirtLength, apexToApex) {
+        this.waist = waist;
+        this.lowHip = lowHip;
+        this.waistToHip = waistToHip;
+        this.skirtLength = skirtLength;
+        this.apexToApex = apexToApex;
 
         this.patternFrontSkirt = new PatternFrontSkirt();
         this.patternBackSkirt = new PatternBackSkirt();
@@ -211,28 +207,24 @@ class Skirt {
         this.createBackPattern();
     }
 
-    static get MEDIDAS_SECUNDARIAS() {
+    static get SECONDARY_MEASUREMENTS() {
         return SecondarySkirtMeasurements;
-    }
-
-    static get VISUAL_AID_FRONT_PATTERN() {
-        return visualAidFrontSkirtJSON;
     }
 
     createFrontPattern () {
         // lineAB
         const pointA = new Point(40, 50, 'A');
-        const distAB = ((this.distanciaSenos / 2) - (Skirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZA / 2));
+        const distAB = ((this.apexToApex / 2) - (Skirt.SECONDARY_MEASUREMENTS.DART_WIDTH / 2));
         this.patternFrontSkirt.lineAB = new Line(pointA, distAB);
 
         // dartBC
         const pointB = this.patternFrontSkirt.lineAB.getEndPoint();
-        const dartBC = new Dart(pointB, Skirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZA, Skirt.MEDIDAS_SECUNDARIAS.PROF_PINZA_DELANTERA, 0);
+        const dartBC = new Dart(pointB, Skirt.SECONDARY_MEASUREMENTS.DART_WIDTH, Skirt.SECONDARY_MEASUREMENTS.FRONT_DART_DEPTH, 0);
         this.patternFrontSkirt.dartBC = dartBC;
 
         // lineCD
         const pointC = dartBC.getEndPoint();
-        const distAD = (this.contornoCintura / 4) + Skirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZA;
+        const distAD = (this.waist / 4) + Skirt.SECONDARY_MEASUREMENTS.DART_WIDTH;
         const distAuxCD = getHorizontalDistance(pointA, pointC);
         const lineCD = new Line(pointC, distAD - distAuxCD);
         this.patternFrontSkirt.lineCD = lineCD;
@@ -240,17 +232,17 @@ class Skirt {
         // curveLineDE
         // Because we have to draw a curve from D to E and this last point is calculated through point H,
         // we must first calculate H
-        const distAH = this.distCinturaCadera;
+        const distAH = this.waistToHip;
         const lineAH = new Line(pointA, distAH, 270);
-        const distHE = this.contornoCadera / 4;
+        const distHE = this.lowHip / 4;
         const dottedLineHE = new Line(lineAH.getEndPoint(), distHE);
         this.patternFrontSkirt.dottedLineHE = dottedLineHE;
 
-        const curveLineDE = new CurveLine(lineCD.getEndPoint(), dottedLineHE.getEndPoint(), Skirt.MEDIDAS_SECUNDARIAS.OFFSET_CURVA_CADERA);
+        const curveLineDE = new CurveLine(lineCD.getEndPoint(), dottedLineHE.getEndPoint(), Skirt.SECONDARY_MEASUREMENTS.OFFSET_HIP_CURVE);
         this.patternFrontSkirt.curveLineDE = curveLineDE;
 
         // lineEF
-        const distEF = this.largoFalda - this.distCinturaCadera;
+        const distEF = this.skirtLength - this.waistToHip;
         const lineEF = new Line(curveLineDE.getEndPoint(), distEF, 270);
         this.patternFrontSkirt.lineEF = lineEF;
 
@@ -259,12 +251,10 @@ class Skirt {
         this.patternFrontSkirt.lineFG = lineFG;
 
         // lineGA
-        const lineGA = new Line(lineFG.getEndPoint(), this.largoFalda, 90);
-        this.patternFrontSkirt.lineGA = lineGA;
+        this.patternFrontSkirt.lineGA = new Line(lineFG.getEndPoint(), this.skirtLength, 90);
 
         // lineGH
-        const lineGH = new Line(lineFG.getEndPoint(), dottedLineHE.getBeginPoint());
-        this.patternFrontSkirt.lineGH = lineGH;
+        this.patternFrontSkirt.lineGH = new Line(lineFG.getEndPoint(), dottedLineHE.getBeginPoint());
     }
 
     createBackPattern() {
@@ -276,18 +266,17 @@ class Skirt {
         // they must be separated by a certain distance (offsetPattern)
         const offsetPattern = this.patternFrontSkirt.lineFG.getLength() + 80;
         const iX = pointA.x + offsetPattern;
-        const iY = pointA.y + Skirt.MEDIDAS_SECUNDARIAS.CAIDA_CINTURA;
+        const iY = pointA.y + Skirt.SECONDARY_MEASUREMENTS.WAIST_DROP;
         const pointI = new Point(iX, iY);
 
         // curveLineIJ
         const jX = pointI.x + this.patternFrontSkirt.lineAB.getLength();
-        const jY = pointI.y - (Skirt.MEDIDAS_SECUNDARIAS.CAIDA_CINTURA - Skirt.MEDIDAS_SECUNDARIAS.BAJADA_PINZA);
+        const jY = pointI.y - (Skirt.SECONDARY_MEASUREMENTS.WAIST_DROP - Skirt.SECONDARY_MEASUREMENTS.LOWER_DART);
         const pointJ = new Point(jX, jY);
-        const curveLineIJ = new CurveLine(pointI, pointJ, Skirt.MEDIDAS_SECUNDARIAS.OFFSET_CURVA_CINTURA);
-        this.patternBackSkirt.curveLineIJ = curveLineIJ;
+        this.patternBackSkirt.curveLineIJ = new CurveLine(pointI, pointJ, Skirt.SECONDARY_MEASUREMENTS.OFFSET_CURVE_WAIST);
 
         // dartJK
-        const dartJK = new Dart(pointJ, Skirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZA, Skirt.MEDIDAS_SECUNDARIAS.PROF_PINZA_TRASERA, 0);
+        const dartJK = new Dart(pointJ, Skirt.SECONDARY_MEASUREMENTS.DART_WIDTH, Skirt.SECONDARY_MEASUREMENTS.REAR_DART_DEPTH, 0);
         this.patternBackSkirt.dartJK = dartJK;
 
         // curveLineKL
@@ -295,20 +284,19 @@ class Skirt {
         const lX = dartJK.getEndPoint().x + distCD;
         const lY = this.patternFrontSkirt.lineCD.getEndPoint().y;
         const pointL = new Point(lX, lY, 'L');
-        const curveLineKL = new CurveLine(dartJK.getEndPoint(), pointL, Skirt.MEDIDAS_SECUNDARIAS.OFFSET_CURVA_CINTURA);
-        this.patternBackSkirt.curveLineKL = curveLineKL;
+        this.patternBackSkirt.curveLineKL = new CurveLine(dartJK.getEndPoint(), pointL, Skirt.SECONDARY_MEASUREMENTS.OFFSET_CURVE_WAIST);
 
         // curveLineLM
         // Because we have to draw a curve from L to M and this last point is calculated through point P,
         // we must first calculate P and after that we'll calculate M
-        const distIP = this.distCinturaCadera - Skirt.MEDIDAS_SECUNDARIAS.CAIDA_CINTURA;
+        const distIP = this.waistToHip - Skirt.SECONDARY_MEASUREMENTS.WAIST_DROP;
         const lineIP = new Line(pointI, distIP, 270);
         const pointP = lineIP.getEndPoint();
-        const distPM = this.contornoCadera / 4;
+        const distPM = this.lowHip / 4;
         const dottedLinePM = new Line(pointP, distPM);
         this.patternBackSkirt.dottedLinePM = dottedLinePM;
         const pointM = dottedLinePM.getEndPoint();
-        const curveLineLM = new CurveLine(pointL, pointM, Skirt.MEDIDAS_SECUNDARIAS.OFFSET_CURVA_CADERA);
+        const curveLineLM = new CurveLine(pointL, pointM, Skirt.SECONDARY_MEASUREMENTS.OFFSET_HIP_CURVE);
         this.patternBackSkirt.curveLineLM = curveLineLM;
 
         // From this point we take advantage of some calculations previously made for the front pattern
@@ -323,12 +311,10 @@ class Skirt {
         this.patternBackSkirt.lineNO = lineNO;
 
         // lineOI
-        const lineOI = new Line(lineNO.getEndPoint(), pointI);
-        this.patternBackSkirt.lineOI = lineOI;
+        this.patternBackSkirt.lineOI = new Line(lineNO.getEndPoint(), pointI);
 
         // lieOP
-        const lineOP = new Line(lineNO.getEndPoint(), dottedLinePM.getBeginPoint());
-        this.patternBackSkirt.lineOP = lineOP;
+        this.patternBackSkirt.lineOP = new Line(lineNO.getEndPoint(), dottedLinePM.getBeginPoint());
 
     }
 
@@ -341,11 +327,7 @@ class Skirt {
     }
 
     getDrawableObjects() {
-        return new Array(this.patternFrontSkirt, this.patternBackSkirt);
-    }
-
-    getVisualAid() {
-        return new Array(Skirt.VISUAL_AID_FRONT_PATTERN);
+        return [this.patternFrontSkirt, this.patternBackSkirt];
     }
 
 }

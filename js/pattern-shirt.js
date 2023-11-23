@@ -1,14 +1,13 @@
 
 
-// Medidas secundarias. En la mayoría de patrones suelen ser medidas un tanto aleatorias, definidas
-// por los diseñadores tras años de experiencia y experimentación, que han sido definidas siguiendo
-// valores estéticos. ¿Cuanto de profunda debe de ser una pinza? En la mayoría de los casos esta medida
-// depende de la experiencia del sastre.
+// Secondary measures. In most patterns, they tend to be somewhat random measurements, defined
+// by the designers after years of experience and experimentation, which have been defined following
+// aesthetic values. How deep should a clamp be? In most cases this measure depends on the tailor's experience.
 const SecondaryShirtMeasurements = {
     TOLERANCE: 5,
-    HOLGURA: 15,
-    HOLGURAMANGA: 50,
-    ANCHO_PINZACINTURA: 30,
+    EASE: 15,
+    EASE_SLEEVE: 50,
+    WAIST_CLAMP_WIDTH: 30,
 }
 
 Object.freeze(SecondaryShirtMeasurements);
@@ -148,6 +147,7 @@ class PatternFrontShirt {
     auxiliaryLine_B1_H1;
     auxiliaryLine_H1_H2;
     auxiliaryLine_H2_L1;
+    auxiliaryLine_J1_K1;
     auxiliaryLine_C2_A1;
     curveLine_G1_E1;
     line_E1_F1;
@@ -162,6 +162,14 @@ class PatternFrontShirt {
     line_C2_C1;
     dottedLine_C1_H1;
 
+
+    get auxiliaryLineJ1K1() {
+        return this.auxiliaryLine_J1_K1;
+    }
+
+    set auxiliaryLineJ1K1(value) {
+        this.auxiliaryLine_J1_K1 = value;
+    }
 
     get lineC2C1() {
         return this.line_C2_C1;
@@ -461,24 +469,23 @@ class Shirt {
     patternBackShirt;
     patternSleeveShirt;
 
-    constructor(contornoBusto, talleEspalda, talleDelantero, largoHombro, caidaHombros,
-                anchoEscote, distanciaSenos, contornoCintura, cinturaSeno, largoBrazoExt,
-                largoBrazoInt, armCircumference, wristCircumference,) {
+    constructor(bustCircumference, backLength, frontLength, shoulderLength, shoulderDrop,
+                necklineWidth, apexToApex, waist, apexToWaist, overarmLength,
+                underarmLength, armCircumference, wristCircumference,) {
 
-        this.contornoBusto = contornoBusto;
-        this.talleEspalda = talleEspalda;
-        // this.talleDelantero = talleDelantero;
-        this.largoHombro = largoHombro;
-        this.caidaHombros = caidaHombros;
-        this.anchoEscote = anchoEscote;
-        this.distanciaSenos = distanciaSenos;
-        this.contornoCintura = contornoCintura;
-        this.cinturaSeno = cinturaSeno;
-        this.largoBrazoExt = largoBrazoExt;
-        this.largoBrazoInt = largoBrazoInt - 30; // Se resta 30 como corrección para la sisa
+        this.bustCircumference = bustCircumference;
+        this.backLength = backLength;
+        this.shoulderLength = shoulderLength;
+        this.shoulderDrop = shoulderDrop;
+        this.necklineWidth = necklineWidth;
+        this.apexToApex = apexToApex;
+        this.waist = waist;
+        this.apexToWaist = apexToWaist;
+        this.overarmLength = overarmLength;
+        this.underarmLength = underarmLength;
         this.armCircumference = armCircumference;
         this.wristCircumference = wristCircumference;
-        this.diferenciaTalleDelanteroTrasero = talleDelantero - talleEspalda;
+        this.differenceFrontLengthBackLength = frontLength - backLength;
 
         this.patternFrontShirt = new PatternFrontShirt();
         this.patternBackShirt = new PatternBackShirt();
@@ -489,7 +496,7 @@ class Shirt {
         this.createSleevePattern();
     }
 
-    static get MEDIDAS_SECUNDARIAS() {
+    static get SECONDARY_MEASUREMENTS() {
         return SecondaryShirtMeasurements;
     }
 
@@ -497,136 +504,105 @@ class Shirt {
         // Point A1
         const pointA1 = new Point(40, 50);
 
-        // Point B1 --> 1/2 Semi-contorno busto + 1,5 cm de holgura (un dedo)
-        const distA1B1 = (this.contornoBusto + Shirt.MEDIDAS_SECUNDARIAS.HOLGURA) / 4;
+        // Point B1 --> 1/2 Semi-contour bust + 1,5 cm of ease (one finger)
+        const distA1B1 = (this.bustCircumference + Shirt.SECONDARY_MEASUREMENTS.EASE) / 4;
         const lineA1B1 = new Line(pointA1, distA1B1);
         const pointB1 = lineA1B1.getEndPoint();
 
-        // Point C1 --> Talle espalda
-        const lineA1C1 = new Line(pointA1, this.talleEspalda, 270);
+        // Point C1 --> Back Length
+        const lineA1C1 = new Line(pointA1, this.backLength, 270);
         const pointC1 = lineA1C1.getEndPoint();
 
-        // Point E1 --> Ancho escote
-        const lineA1E1 = new Line(pointA1, this.anchoEscote);
+        // Point E1 --> Neckline width
+        const lineA1E1 = new Line(pointA1, this.necklineWidth);
         const pointE1 = lineA1E1.getEndPoint();
 
-        // Point F1 --> Traslado de hombro (teniendo en cuenta la caida de hombros)
-        const angleE1F1 = fromRadiansToDegrees(Math.asin(this.caidaHombros / this.largoHombro));
-        const lineE1F1 = new Line(pointE1, this.largoHombro, -angleE1F1);
+        // Point F1 --> Shoulder transfer (taking into account shoulder drop)
+        const angleE1F1 = fromRadiansToDegrees(Math.asin(this.shoulderDrop / this.shoulderLength));
+        const lineE1F1 = new Line(pointE1, this.shoulderLength, -angleE1F1);
         const pointF1 = lineE1F1.getEndPoint();
         this.patternFrontShirt.lineE1F1 = lineE1F1;
 
-        // Point G1 --> Bajada escote delantero
+        // Point G1 --> Lowered front neckline
         const distA1G1 = lineA1E1.getLength() + 30;
         const lineA1G1 = new Line(pointA1, distA1G1, 270);
         const pointG1 = lineA1G1.getEndPoint();
 
-        // Point H1 --> opuesto al punto C1 (distA1B1 pero desde C1)
+        // Point H1 --> opposite to point C1 (distA1B1 but from C1)
         const lineC1H1 = new Line(pointC1, distA1B1);
         const pointH1 = lineC1H1.getEndPoint();
 
-        // Point I1 --> Largo del costado (medido de abajo a arriba) - bajada de sisa
-        const lineH1I1 = new Line(pointH1, this.cinturaSeno, 90);
+        // Point I1 --> Side length (measured from bottom to top) - armhole drop
+        const lineH1I1 = new Line(pointH1, this.apexToWaist, 90);
         const pointI1 = lineH1I1.getEndPoint();
 
-        // Point C2 --> diferencia talle delantero - talle trasero (el trasero es más corto)
-        const lineC1C2 = new Line(pointC1, this.diferenciaTalleDelanteroTrasero, 270);
+        // Point C2 --> difference between front size and back size (the back is shorter)
+        const lineC1C2 = new Line(pointC1, this.differenceFrontLengthBackLength, 270);
         const pointC2 = lineC1C2.getEndPoint();
 
         // Point H2
         const lineC2H2 = new Line(pointC2, distA1B1);
         const pointH2 = lineC2H2.getEndPoint();
 
-
-        // Rectangle --> Trazado del rectángulo del patrón delantero
-        const lineA1C2 = new Line(pointA1, pointC2);
-        const distA1C2 = lineA1C2.getLength();
-
-        // Point J1 --> final de la Pinza cintura
-        const distC2J1 = (this.distanciaSenos / 2) + (Shirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZACINTURA / 2);
+        // Point J1 --> end of the waist dart
+        const distC2J1 = (this.apexToApex / 2) + (Shirt.SECONDARY_MEASUREMENTS.WAIST_CLAMP_WIDTH / 2);
         const lineC2J1 = new Line(pointC2, distC2J1);
         const pointJ1 = lineC2J1.getEndPoint();
 
-        // Point L1 --> 1/4 Controno Cintura + ancho pinza cintura
-        const distC2L1 = (this.contornoCintura / 4) + Shirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZACINTURA;
+        // Point L1 --> 1/4 Waist Contour + waist dart width
+        const distC2L1 = (this.waist / 4) + Shirt.SECONDARY_MEASUREMENTS.WAIST_CLAMP_WIDTH;
         const lineC2L1 = new Line(pointC2, distC2L1);
         const pointL1 = lineC2L1.getEndPoint();
 
         // Point M
-        const distH2M = this.cinturaSeno + (this.diferenciaTalleDelanteroTrasero / 2);
+        const distH2M = this.apexToWaist + (this.differenceFrontLengthBackLength / 2);
         const lineH2M = new Line(pointH2, distH2M, 90);
         const pointM = lineH2M.getEndPoint();
 
-        // Point N
-        const distH2N = this.cinturaSeno - (this.diferenciaTalleDelanteroTrasero / 2);
-        const lineH2N = new Line(pointH2, distH2N, 90);
-        const pointN = lineH2N.getEndPoint();
-
-
-        // Sisa TodoEnUno
+        // All-In-One Armhole
         const lineF1I1 = new Line(pointF1, pointI1);
-        const offsetSisaDelantera = (lineF1I1.getLength() * 25) / 100;
-        const curveLineF1I1 = new CurveLine(pointF1, pointI1, -offsetSisaDelantera, 'bottom');
-        this.patternFrontShirt.curveLineF1I1 = curveLineF1I1;
+        const offsetFrontArmhole = (lineF1I1.getLength() * 25) / 100;
+        this.patternFrontShirt.curveLineF1I1 = new CurveLine(pointF1, pointI1, -offsetFrontArmhole, 'bottom');
 
         const lineG1E1 = new Line(pointG1, pointE1);
         const offsetG1E1 = (lineG1E1.getLength() * 25) / 100;
-        const curveLineG1E1 = new CurveLine(pointG1, pointE1, -offsetG1E1);
-        this.patternFrontShirt.curveLineG1E1 = curveLineG1E1;
+        this.patternFrontShirt.curveLineG1E1 = new CurveLine(pointG1, pointE1, -offsetG1E1);
 
-        // Pinza Cintura
-        const dartJ1K1 = new Dart(pointJ1, Shirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZACINTURA, this.cinturaSeno - 25, 180);
+        // Dart waist
+        const dartJ1K1 = new Dart(pointJ1, Shirt.SECONDARY_MEASUREMENTS.WAIST_CLAMP_WIDTH, this.apexToWaist - 25, 180);
         this.patternFrontShirt.dartJ1K1 = dartJ1K1;
 
         // lineK1C2
         const pointK1 = dartJ1K1.getEndPoint();
-        const lineK1C2 = new Line(pointK1, pointC2);
-        this.patternFrontShirt.lineK1C2 = lineK1C2;
+        this.patternFrontShirt.lineK1C2 =  new Line(pointK1, pointC2);
 
         // lineL1J1
-        let lineL1J1 = new Line(pointL1, pointJ1);
-        this.patternFrontShirt.lineL1J1 = lineL1J1;
+        this.patternFrontShirt.lineL1J1 = new Line(pointL1, pointJ1);
 
-        // Pinza Costado
-        const profPinzaCostado = distA1B1 - (this.distanciaSenos / 2);
-        const dartD1D2 = new Dart(pointM, this.diferenciaTalleDelanteroTrasero, profPinzaCostado, 270);
+        // Side Dart
+        const sideDartDepth = distA1B1 - (this.apexToApex / 2);
+        const dartD1D2 = new Dart(pointM, this.differenceFrontLengthBackLength, sideDartDepth, 270);
         this.patternFrontShirt.dartD1D2 = dartD1D2;
 
         // lineI1D1
-        const lineI1D1 = new Line(pointI1, dartD1D2.getBeginPoint());
-        this.patternFrontShirt.lineI1D1 = lineI1D1;
+        this.patternFrontShirt.lineI1D1 = new Line(pointI1, dartD1D2.getBeginPoint());
 
         // lineD2L1
-        let lineD2L1 = new Line(dartD1D2.getEndPoint(), pointL1);
-        //lineD2L1 = new Line(dartD1D2.getEndPoint(), lineD2L1.getLength(), 255.22);
-        this.patternFrontShirt.lineD2L1 = lineD2L1;
+        this.patternFrontShirt.lineD2L1 = new Line(dartD1D2.getEndPoint(), pointL1);
 
         // lineC2G1
-        const lineC2G1 = new Line(pointC2, pointG1);
-        this.patternFrontShirt.lineC2G1 = lineC2G1;
+        this.patternFrontShirt.lineC2G1 = new Line(pointC2, pointG1);
 
-        // Auxilaries Lines
-        const auxiliaryLineA1B1 = new Line(pointA1, pointB1);
-        this.patternFrontShirt.auxiliaryLineA1B1 = auxiliaryLineA1B1;
-
-        const auxiliaryLineB1H1 = new Line(pointB1, pointH1);
-        this.patternFrontShirt.auxiliaryLineB1H1 = auxiliaryLineB1H1;
-
-        const auxiliaryLineH1H2 = new Line(pointH1, pointH2);
-        this.patternFrontShirt.auxiliaryLineH1H2 = auxiliaryLineH1H2;
-
-        const auxiliaryLineH2L1 = new Line(pointH2, pointL1);
-        this.patternFrontShirt.auxiliaryLineH2L1 = auxiliaryLineH2L1;
-
-        const auxiliaryLineC2A1 = new Line(pointC2, pointA1);
-        this.patternFrontShirt.auxiliaryLineC2A1 = auxiliaryLineC2A1;
-
-        const lineC2C1 = new Line(pointC2, pointC1);
-        this.patternFrontShirt.lineC2C1 = lineC2C1;
-
-        const dottedLineC1H1 = new Line(pointC1, pointH1);
-        this.patternFrontShirt.dottedLineC1H1 = dottedLineC1H1;
-    }
+        // Auxiliaries Lines
+        this.patternFrontShirt.auxiliaryLineA1B1 = new Line(pointA1, pointB1);
+        this.patternFrontShirt.auxiliaryLineB1H1 = new Line(pointB1, pointH1);
+        this.patternFrontShirt.auxiliaryLineH1H2 = new Line(pointH1, pointH2);
+        this.patternFrontShirt.auxiliaryLineH2L1 = new Line(pointH2, pointL1);
+        this.patternFrontShirt.auxiliaryLineC2A1 = new Line(pointC2, pointA1);
+        this.patternFrontShirt.auxiliaryLineJ1K1 =  new Line(pointJ1, pointK1);
+        this.patternFrontShirt.lineC2C1 = new Line(pointC2, pointC1);
+        this.patternFrontShirt.dottedLineC1H1 = new Line(pointC1, pointH1);
+    } // end of createFrontPattern()
 
     createBackPattern() {
         // Point A2
@@ -638,57 +614,55 @@ class Shirt {
         const pointB1 = this.patternFrontShirt.auxiliaryLineA1B1.getEndPoint();
         const pointA2 = new Point(pointB1.x + offsetBetweenPatterns, pointB1.y);
 
-        // Point B2 --> 1/2 Semi-contorno busto + 1,5 cm de holgura (un dedo)
-        const distA2B2 = (this.contornoBusto + Shirt.MEDIDAS_SECUNDARIAS.HOLGURA) / 4;
+        // Point B2 --> 1/2 Semi-contour bust + 1.5 cm clearance (one finger)
+        const distA2B2 = (this.bustCircumference + Shirt.SECONDARY_MEASUREMENTS.EASE) / 4;
         const auxiliaryLineA2B2 = new Line(pointA2, distA2B2);
         const pointB2 = auxiliaryLineA2B2.getEndPoint();
 
-        // Point C3 --> Talle espalda
-        const distA2C3 = this.talleEspalda;
+        // Point C3 --> Back Length
+        const distA2C3 = this.backLength;
         const lineA2C3 = new Line(pointA2, distA2C3, 270);
         const pointC3 = lineA2C3.getEndPoint();
 
-        // Point pointE2 --> Ancho escote
-        const lineA2E2 = new Line(pointA2, this.anchoEscote);
+        // Point pointE2 --> Neckline width
+        const lineA2E2 = new Line(pointA2, this.necklineWidth);
         const pointE2 = lineA2E2.getEndPoint();
 
-        // Point pointF2 --> Traslado de hombro (teniendo en cuenta la caida de hombros)
-        const angleE2F2 = fromRadiansToDegrees(Math.asin(this.caidaHombros / this.largoHombro));
-        const lineE2F2 = new Line(pointE2, this.largoHombro, -angleE2F2);
+        // Point pointF2 --> Shoulder transfer (taking into account shoulder drop)
+        const angleE2F2 = fromRadiansToDegrees(Math.asin(this.shoulderDrop / this.shoulderLength));
+        const lineE2F2 = new Line(pointE2, this.shoulderLength, -angleE2F2);
         const pointF2 = lineE2F2.getEndPoint();
 
-        // Point pointG2 --> Bajada escote trasero
-        const distA2G2 = this.caidaHombros / 2;
+        // Point pointG2 --> Back neckline lowering
+        const distA2G2 = this.shoulderDrop / 2;
         const lineA2G2 = new Line(pointA2, distA2G2, 270);
         const pointG2 = lineA2G2.getEndPoint();
-
-
-
-        // Point pointH3 --> opuesto al punto c (distAB pero desde c)
+        
+        // Point pointH3 --> opposite to point c (distAB but from c)
         const lineC3H3 = new Line(pointC3, distA2B2);
         const pointH3 = lineC3H3.getEndPoint();
 
-        // Point pointI2 --> Largo del costado (medido de abajo a arriba) - bajada de sisa
-        // const distH3I2 = cinturaSeno;
-        const lineH3I2 = new Line(pointH3, this.cinturaSeno, 90);
+        // Point pointI2 --> Side length (measured from bottom to top) - armhole drop
+        // const distH3I2 = apexToWaist;
+        const lineH3I2 = new Line(pointH3, this.apexToWaist, 90);
         const pointI2 = lineH3I2.getEndPoint();
 
-        // Point pointJ2 --> final de la Pinza cintura
-        const distC3J2 = (this.distanciaSenos / 2) + (Shirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZACINTURA / 2);
+        // Point pointJ2 --> end of the waist dart
+        const distC3J2 = (this.apexToApex / 2) + (Shirt.SECONDARY_MEASUREMENTS.WAIST_CLAMP_WIDTH / 2);
         const lineC3J2 = new Line(pointC3, distC3J2);
         const pointJ2 = lineC3J2.getEndPoint();
 
-        const distC3L2 = (this.contornoCintura / 4) + Shirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZACINTURA;
+        const distC3L2 = (this.waist / 4) + Shirt.SECONDARY_MEASUREMENTS.WAIST_CLAMP_WIDTH;
         const lineC3L2 = new Line(pointC3, distC3L2);
         const pointL2 = lineC3L2.getEndPoint();
 
         // LineI2L2
         const lineI2L2 = new Line(pointI2, pointL2);
 
-        // Sisa TodoEnUno
+        // All-In-One Armhole
         const lineF2I2 = new Line(pointF2, pointI2);
-        const offsetSisa = (lineF2I2.getLength() * 20) / 100;
-        const curveLineF2I2 = new CurveLine(pointF2, pointI2, -offsetSisa, 'bottom');
+        const offsetArmhole = (lineF2I2.getLength() * 20) / 100;
+        const curveLineF2I2 = new CurveLine(pointF2, pointI2, -offsetArmhole, 'bottom');
 
         const lineG2E2 = new Line(pointG2, pointE2);
         const offsetG2E2 = (lineG2E2.getLength() * 9.375) / 100;
@@ -696,7 +670,7 @@ class Shirt {
 
         const lineL2J2 = new Line(pointL2, pointJ2);
 
-        const dartJ2K2 = new Dart(pointJ2, Shirt.MEDIDAS_SECUNDARIAS.ANCHO_PINZACINTURA, this.cinturaSeno, 180);
+        const dartJ2K2 = new Dart(pointJ2, Shirt.SECONDARY_MEASUREMENTS.WAIST_CLAMP_WIDTH, this.apexToWaist, 180);
 
         const lineK2C3 = new Line(dartJ2K2.getEndPoint(), pointC3);
 
@@ -732,35 +706,35 @@ class Shirt {
     createSleevePattern() {
         const tolerance = 5;
 
-        const sisaBackLenght = this.patternBackShirt.curveLineF2I2.getLength();
-        const sisaFrontLenght = this.patternFrontShirt.curveLineF1I1.getLength();
+        const armholeBackLength = this.patternBackShirt.curveLineF2I2.getLength();
+        const armholeFrontLength = this.patternFrontShirt.curveLineF1I1.getLength();
 
         /******************* SLEEVE - BACK ********************/
         const pointB2 = this.patternBackShirt.auxiliaryLineA2B2.getEndPoint();
         const pointS = new Point(pointB2.x + 80, pointB2.y);
 
         // Point pointA3
-        const distSA3 = (this.armCircumference + Shirt.MEDIDAS_SECUNDARIAS.HOLGURAMANGA) / 2;
+        const distSA3 = (this.armCircumference + Shirt.SECONDARY_MEASUREMENTS.EASE_SLEEVE) / 2;
         const lineSA3 = new Line(pointS, distSA3);
         const pointA3 = lineSA3.getEndPoint();
 
         // Point pointB3
-        // const distA3B3 = largoBrazoExt;
-        const lineA3B3 = new Line(pointA3, this.largoBrazoExt, 270);
+        // const distA3B3 = overarmLength;
+        const lineA3B3 = new Line(pointA3, this.overarmLength, 270);
         const pointB3 = lineA3B3.getEndPoint();
 
         // Point pointC4
-        const distB3C4 = (this.wristCircumference + Shirt.MEDIDAS_SECUNDARIAS.HOLGURA) / 2;
+        const distB3C4 = (this.wristCircumference + Shirt.SECONDARY_MEASUREMENTS.EASE) / 2;
         const lineB3C4 = new Line(pointB3, distB3C4, 180);
         const pointC4 = lineB3C4.getEndPoint();
 
-        // Point pointD3 --> Traslado de largo manga interior
-        // Hay que restar las distancias SA3 y C3B3:
-        let hTriangulo = distSA3 - distB3C4;
-        let hipotenusa = this.largoBrazoInt;
-        let angleC4D3 = fromRadiansToDegrees(Math.asin(hTriangulo / hipotenusa));
-        let matchSisaBack = false;
-        let numIntentosBack = 10; // Condición secundaria, por si acaso se embucla
+        // Point pointD3 --> Transfer of underarm length
+        // Must subtract the distances SA3 and C3B3:
+        let hTriangle = distSA3 - distB3C4;
+        let hypotenuse = this.underarmLength;
+        let angleC4D3 = fromRadiansToDegrees(Math.asin(hTriangle / hypotenuse));
+        let matchArmholeBack = false;
+        let numAttemptsBack = 10; // Secondary condition, to avoid an infinite loop
 
         let curveLineD3P2;
         let curveLineP2A3;
@@ -772,9 +746,9 @@ class Shirt {
         let pointP13;
 
         do {
-            --numIntentosBack;
+            --numAttemptsBack;
 
-            lineC4D3 = new Line(pointC4, this.largoBrazoInt, angleC4D3 + 90);
+            lineC4D3 = new Line(pointC4, this.underarmLength, angleC4D3 + 90);
             pointD3 = lineC4D3.getEndPoint();
 
             // Line D3A3
@@ -791,63 +765,55 @@ class Shirt {
             var lineP1A3 = new Line(pointP11, pointA3);
             pointP13 = lineP1A3.getMiddlePoint();
 
-            // Line D3P2
-            // var lineD3P2 = new Line(pointD3, pointP12);
-            //
-            // // Line P2A3
-            // var lineP2A3 = new Line(pointP12, pointA3);
-
-
             /********** Curve Lines ***********/
             curveLineD3P2 = new CurveLine(pointD3, pointP12, -5);
             curveLineP2A3 = new CurveLine(pointP12, pointA3, 20); // 15
 
-            var sisaBackLenghtSleeve = curveLineD3P2.getLength() + curveLineP2A3.getLength();
+            var armholeBackLengthSleeve = curveLineD3P2.getLength() + curveLineP2A3.getLength();
 
-            if ((sisaBackLenght - sisaBackLenghtSleeve) > tolerance || (sisaBackLenghtSleeve - sisaBackLenght) > tolerance) {
-                // aumentamos el ángulo
-                if (sisaBackLenght > sisaBackLenghtSleeve) {
+            if ((armholeBackLength - armholeBackLengthSleeve) > tolerance || (armholeBackLengthSleeve - armholeBackLength) > tolerance) {
+                // we increase the angle
+                if (armholeBackLength > armholeBackLengthSleeve) {
                     angleC4D3 = angleC4D3 + 1;
                 }
-                // disminuimos el ángulo
-                if (sisaBackLenghtSleeve > sisaBackLenght) {
+                // we decrease the angle
+                if (armholeBackLengthSleeve > armholeBackLength) {
                     angleC4D3 = angleC4D3 - 1;
                 }
             } else {
-                // fin de la búsqueda
-                matchSisaBack = true;
+                // end of search
+                matchArmholeBack = true;
             }
 
-            if (numIntentosBack === 0) {
+            if (numAttemptsBack === 0) {
                 break;
             }
 
-        } while (!matchSisaBack);
+        } while (!matchArmholeBack);
 
         /******************* SLEEVE - FRONT ********************/
         // Point pointC5
         let pointC5 = flipYPoint(pointB3, pointC4);
 
 
-        // Point pointD4 --> Traslado de largo manga interior
-        // Hay que restar las distancias A2S3 y B2C4:
-        let distA3S3 = (this.armCircumference + Shirt.MEDIDAS_SECUNDARIAS.HOLGURAMANGA) / 2;
-        let hTrianguloFront = distA3S3 - distB3C4;
-        let angleC5D4 = fromRadiansToDegrees(Math.asin(hTrianguloFront / hipotenusa));
-        let matchSisaFront = false;
-        let numIntentosFront = 10; // Condición secundaria, por si acaso se embucla
+        // Point pointD4 --> Transfer of underarm length
+        // Must subtract the distances A2S3 and B2C4:
+        let distA3S3 = (this.armCircumference + Shirt.SECONDARY_MEASUREMENTS.EASE_SLEEVE) / 2;
+        let hTriangleFront = distA3S3 - distB3C4;
+        let angleC5D4 = fromRadiansToDegrees(Math.asin(hTriangleFront / hypotenuse));
+        let matchArmholeFront = false;
+        let numAttemptsFront = 10; // Secondary condition, to avoid an infinite loop
 
         let curveLineD4P12;
         let curveLineP12A3;
         let pointD4;
         let pointP21;
         let pointP22;
-        let pointP32;
 
         do {
-            --numIntentosFront;
+            --numAttemptsFront;
 
-            var lineC5D4 = new Line(pointC5, this.largoBrazoInt, 90 - angleC5D4);
+            var lineC5D4 = new Line(pointC5, this.underarmLength, 90 - angleC5D4);
             pointD4 = lineC5D4.getEndPoint();
 
             var lineD4A3 = new Line(pointD4, pointA3);
@@ -868,27 +834,27 @@ class Shirt {
             curveLineD4P12 = new CurveLine(pointD4, pointP21, -10);
             curveLineP12A3 = new CurveLine(pointP21, pointA3, 15); // 10
 
-            var sisaFrontLenghtSleeve = curveLineD4P12.getLength() + curveLineP12A3.getLength();
+            var armholeFrontLengthSleeve = curveLineD4P12.getLength() + curveLineP12A3.getLength();
 
-            if ((sisaFrontLenght - sisaFrontLenghtSleeve) > tolerance || (sisaFrontLenghtSleeve - sisaFrontLenght) > tolerance) {
-                // aumentamos el ángulo
-                if (sisaFrontLenght > sisaFrontLenghtSleeve) {
+            if ((armholeFrontLength - armholeFrontLengthSleeve) > tolerance || (armholeFrontLengthSleeve - armholeFrontLength) > tolerance) {
+                // we increase the angle
+                if (armholeFrontLength > armholeFrontLengthSleeve) {
                     angleC5D4 = angleC5D4 + 1;
                 }
-                // disminuimos el ángulo
-                if (sisaFrontLenghtSleeve > sisaFrontLenght) {
+                // we decrease the angle
+                if (armholeFrontLengthSleeve > armholeFrontLength) {
                     angleC5D4 = angleC5D4 - 1;
                 }
             } else {
-                // fin de la búsqueda
-                matchSisaFront = true;
+                // end of search
+                matchArmholeFront = true;
             }
 
-            if (numIntentosFront === 0) {
+            if (numAttemptsFront === 0) {
                 break;
             }
 
-        } while (!matchSisaFront);
+        } while (!matchArmholeFront);
 
 
         /***** After performing the calculations, we add the calculated elements to the back pattern. *****/
@@ -905,7 +871,7 @@ class Shirt {
         this.patternSleeveShirt.lineC5C4 = new Line(pointC5, pointC4);
         
         
-        // Puntos
+        // Points
         this.patternSleeveShirt.pointP11 = pointP11;
         this.patternSleeveShirt.pointP12 = pointP12;
         this.patternSleeveShirt.pointP13 = pointP13;

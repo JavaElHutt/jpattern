@@ -1,14 +1,13 @@
 
-// Medidas secundarias. En la mayoría de patrones suelen ser medidas un tanto aleatorias, definidas
-// por los diseñadores tras años de experiencia y experimentación, que han sido definidas siguiendo
-// valores estéticos. ¿Cuanto de profunda debe de ser una pinza? En la mayoría de los casos esta medida
-// depende de la experiencia del sastre.
+// Secondary measures. In most patterns, they tend to be somewhat random measurements, defined
+// by the designers after years of experience and experimentation, which have been defined following
+// aesthetic values. How deep should a dart be? In most cases this measure depends on the tailor's experience.
 const SecondaryTrousersMeasurements = {
-    HOLGURA_10: 10,
-    HOLGURA_15: 15,
-    HOLGURA_30: 30,
-    HOLGURA_35: 35,
-    HOLGURA_40: 40,
+    EASE_10: 10,
+    EASE_15: 15,
+    EASE_30: 30,
+    EASE_35: 35,
+    EASE_40: 40,
 }
 
 Object.freeze(SecondaryTrousersMeasurements);
@@ -492,15 +491,14 @@ class Trousers {
     patternTrousersFront;
     patternTrousersBack;
 
-    constructor(contornoCadera, distCinturaCadera, largoPantalon, alturaRodilla, alturaCintura, alturaEntrepierna,) {
-        this.contornoCadera = contornoCadera;
-        this.distCinturaCadera = distCinturaCadera;
-        this.largoPantalon = largoPantalon;
-        this.alturaRodilla = alturaRodilla;
-        this.alturaCintura = alturaCintura;
-        this.alturaEntrepierna = alturaEntrepierna;
+    constructor(lowHip, waistToHip, legLength, ankleToKnee, heightToHip, inseam,) {
+        this.lowHip = lowHip;
+        this.waistToHip = waistToHip;
+        this.legLength = legLength;
+        this.ankleToKnee = ankleToKnee;
+        this.inseam = inseam;
 
-        this.tiro = alturaCintura - alturaEntrepierna;
+        this.rise = heightToHip - inseam;
 
         this.patternTrousersFront = new PatternTrousersFront();
         this.patternTrousersBack = new PatternTrousersBack();
@@ -509,51 +507,51 @@ class Trousers {
         this.createBackPattern();
     }
 
-    static get MEDIDAS_SECUNDARIAS() {
+    static get SECONDARY_MEASUREMENTS() {
         return SecondaryTrousersMeasurements;
     }
 
     createFrontPattern() {
         const pointA1 = new Point(100, 50);
 
-        // Point pointB1 --> 1/4 Contorno de Cadera
-        const auxiliaryLineA1B1 = new Line(pointA1, this.contornoCadera / 4);
+        // Point pointB1 --> 1/4 Hip Contour
+        const auxiliaryLineA1B1 = new Line(pointA1, this.lowHip / 4);
         const pointB1 = auxiliaryLineA1B1.getEndPoint();
 
         // Point pointC2
-        const auxiliaryLineA1C2 = new Line(pointA1, this.largoPantalon, 270); // 270 es un ángulo de 90 grados, hacia abajo
+        const auxiliaryLineA1C2 = new Line(pointA1, this.legLength, 270); // 270 es un ángulo de 90 grados, hacia abajo
         const pointC2 = auxiliaryLineA1C2.getEndPoint();
 
-        // Point pointC1 --> Línea de la Rodilla
-        const lineA1C1 = new Line(pointA1, this.largoPantalon - this.alturaRodilla, 270);
+        // Point pointC1 --> Knee Line
+        const lineA1C1 = new Line(pointA1, this.legLength - this.ankleToKnee, 270);
         const pointC1 = lineA1C1.getEndPoint();
         pointC1.setLabel('C1', 'tr');
 
-        // Point pointD1 (Antigua línea de tiro)
-        const lineA1D1 = new Line(pointA1, this.tiro, 270);
+        // Point pointD1 (Old rise line)
+        const lineA1D1 = new Line(pointA1, this.rise, 270);
         const pointD1 = lineA1D1.getEndPoint();
         pointD1.setLabel('D1', 'tr');
 
 
         // Point pointD2
-        const distD1D2 = (this.contornoCadera / 16) - Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_15;
+        const distD1D2 = (this.lowHip / 16) - Trousers.SECONDARY_MEASUREMENTS.EASE_15;
         const lineD1D2 = new Line(pointD1, distD1D2, 180);
         const pointD2 = lineD1D2.getEndPoint();
 
 
         // Point pointE1
-        const lineA1E1 = new Line(pointA1, this.distCinturaCadera, 270);
+        const lineA1E1 = new Line(pointA1, this.waistToHip, 270);
         const pointE1 = lineA1E1.getEndPoint();
         pointE1.setLabel('E1', 'r');
 
-        // Point pointOA1 (OrigenDelantero)
-        const lineUnoAbajo = new Line(pointA1, Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_10, 270);
-        let pointAux = lineUnoAbajo.getEndPoint();
-        const lineUnoDerecha = new Line(pointAux, Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_10);
-        const pointOA1 = lineUnoDerecha.getEndPoint();
+        // Point pointOA1 (Front Origin)
+        const lineOneBelow = new Line(pointA1, Trousers.SECONDARY_MEASUREMENTS.EASE_10, 270);
+        let pointAux = lineOneBelow.getEndPoint();
+        const lineOneRight = new Line(pointAux, Trousers.SECONDARY_MEASUREMENTS.EASE_10);
+        const pointOA1 = lineOneRight.getEndPoint();
         pointOA1.setLabel('OA1', 'tr');
         // Point pointOB1
-        const lineB1OB2 = new Line(pointB1, Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_30, 180);
+        const lineB1OB2 = new Line(pointB1, Trousers.SECONDARY_MEASUREMENTS.EASE_30, 180);
         const pointOB1 = lineB1OB2.getEndPoint();
         pointOB1.setLabel('OB1', 'tr');
 
@@ -567,7 +565,7 @@ class Trousers {
         const pointC4 = lineC2C4.getEndPoint();
 
         // Point pointF1
-        const distC1F1 = this.contornoCadera / 4 - distD1D2;
+        const distC1F1 = this.lowHip / 4 - distD1D2;
         const lineC1F1 = new Line(pointC1, distC1F1);
         const pointF1 = lineC1F1.getEndPoint();
 
@@ -599,7 +597,7 @@ class Trousers {
         const offsetLineC4G1 = lineC4G1.getLength() / 25;
         const curveLineC4G1 = new CurveLine(pointC4, pointG1, offsetLineC4G1);
 
-        const auxiliaryLineD3END = new Line(pointB1, this.largoPantalon, 270);
+        const auxiliaryLineD3END = new Line(pointB1, this.legLength, 270);
 
         /***** After performing the calculations, we add the calculated elements to the back pattern. *****/
         this.patternTrousersFront.auxiliaryLineA1C2 = auxiliaryLineA1C2;
@@ -634,70 +632,67 @@ class Trousers {
         const pointB2 = new Point(pointB1.x + 150, pointB1.y);
 
         // Point pointA2
-        const distB2A2 = (this.contornoCadera / 4) + Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_40;
+        const distB2A2 = (this.lowHip / 4) + Trousers.SECONDARY_MEASUREMENTS.EASE_40;
         const lineB2A2 = new Line(pointB2, distB2A2);
         const pointA2 = lineB2A2.getEndPoint();
 
         // Point pointE2
-        const lineA2E2 = new Line(pointA2, this.distCinturaCadera, 270);
+        const lineA2E2 = new Line(pointA2, this.waistToHip, 270);
         const pointE2 = lineA2E2.getEndPoint();
         pointE2.setLabel('E2', 'r');
 
         // Point pointD4
-        const lineA2D4 = new Line(pointA2, this.tiro, 270);
+        const lineA2D4 = new Line(pointA2, this.rise, 270);
         const pointD4 = lineA2D4.getEndPoint();
         pointD4.setLabel('D4', 'tl');
 
         // Point pointC5
-        const lineB2C5 = new Line(pointB2, this.largoPantalon - this.alturaRodilla, 270);
+        const lineB2C5 = new Line(pointB2, this.legLength - this.ankleToKnee, 270);
         const pointC5 = lineB2C5.getEndPoint();
         pointC5.setLabel('C5', 'l');
 
-        // Rectangle --> Trazado del rectángulo del patrón delantero
-        // painter.drawRect(b2, distB2A2, this.largoPantalon, 'color:#B0C4DE');
-        const tiroLine02 = new Line(pointD4, this.contornoCadera / 4 + Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_40, 180);
-        const auxiliaryLineA2END = new Line(pointA2, this.largoPantalon, 270);
+        // Draw the auxiliary vertical line starting from A2
+        const auxiliaryLineA2END = new Line(pointA2, this.legLength, 270);
 
         // Point pointD5
-        const distD4D5 = (this.contornoCadera / 16) + Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_30;
+        const distD4D5 = (this.lowHip / 16) + Trousers.SECONDARY_MEASUREMENTS.EASE_30;
         const lineD4D5 = new Line(pointD4, distD4D5);
         const pointD5 = lineD4D5.getEndPoint();
 
         // Point pointD6
-        const lineD5D6 = new Line(pointD5, Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_10, 270);
+        const lineD5D6 = new Line(pointD5, Trousers.SECONDARY_MEASUREMENTS.EASE_10, 270);
         const pointD6 = lineD5D6.getEndPoint();
 
         // Point pointOB2
-        const lineB2OB2 = new Line(pointB2, Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_30);
+        const lineB2OB2 = new Line(pointB2, Trousers.SECONDARY_MEASUREMENTS.EASE_30);
         const pointOB2 = lineB2OB2.getEndPoint();
         pointOB2.setLabel('OB2', 'tr');
 
         // Point pointOA2
-        let lineAux = new Line(pointA2, Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_35, 180);
+        let lineAux = new Line(pointA2, Trousers.SECONDARY_MEASUREMENTS.EASE_35, 180);
         let pointAux = lineAux.getEndPoint();
-        lineAux = new Line(pointAux, Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_15, 90);
+        lineAux = new Line(pointAux, Trousers.SECONDARY_MEASUREMENTS.EASE_15, 90);
         const pointOA2 = lineAux.getEndPoint();
         pointOA2.setLabel('OA2', 'tr');
 
         // Point pointD7
-        const lineB2D7 = new Line(pointB2, this.tiro, 270);
+        const lineB2D7 = new Line(pointB2, this.rise, 270);
         const pointD7 = lineB2D7.getEndPoint();
 
         const lineD7D5 = new Line(pointD7, pointD5);
-        const x = lineD7D5.getMiddlePoint();
 
-        // Calculo ancho de la pernera
-        const distD1D2 = (this.contornoCadera / 16) - Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_15;
-        const distC1F1 = this.contornoCadera / 4 - distD1D2;
+        // Leg width calculation
+        const distD1D2 = (this.lowHip / 16) - Trousers.SECONDARY_MEASUREMENTS.EASE_15;
+        const distC1F1 = this.lowHip / 4 - distD1D2;
         const distC1C3 = distD1D2 / 2;
-        const anchoMitadPernera = (distC1C3 + distC1F1 + Trousers.MEDIDAS_SECUNDARIAS.HOLGURA_40) / 2;
+        const widthHalfLeg = (distC1C3 + distC1F1 + Trousers.SECONDARY_MEASUREMENTS.EASE_40) / 2;
         const pointX2 = new Line(pointC5, lineD7D5.getLength() / 2).getEndPoint();
         pointX2.setLabel('X2', 'b');
-        const pointI1 = new Line(pointX2, anchoMitadPernera, 180).getEndPoint();
+        const pointI1 = new Line(pointX2, widthHalfLeg, 180).getEndPoint();
         pointI1.setLabel('I1', 'bl');
-        const pointL1 = new Line(pointX2, anchoMitadPernera).getEndPoint();
+        const pointL1 = new Line(pointX2, widthHalfLeg).getEndPoint();
         pointL1.setLabel('L1', 'r');
-        const pointC6 = new Line(pointB2, this.largoPantalon, 270).getEndPoint();
+        const pointC6 = new Line(pointB2, this.legLength, 270).getEndPoint();
         pointC6.setLabel('C6', 'b');
         const pointC7 = new Line(pointC6, distD4D5).getEndPoint();
         pointC7.setLabel('C7', 'b');
@@ -705,7 +700,7 @@ class Trousers {
         const distC5L1 = new Line(pointC5, pointL1).getLength();
         const pointG2 = new Line(pointC6, distC5L1).getEndPoint();
 
-        // Líneas curvas
+        // Curve lines
         const lineOB2OA2 = new Line(pointOB2, pointOA2);
         const offsetLineOB2OA2 = lineOB2OA2.getLength() / 50;
 

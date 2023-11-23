@@ -2,10 +2,10 @@
 const measurementData = {
     "measurements": [
         {
-            "caseName": "contorno-busto",
+            "caseName": "bust-circumference",
             "title": "Bust Circumference",
             "description" : "This measurement is taken around the back, under the arms, and at the widest part of the bust. Horizontal measurement.",
-            "image": "../assets/img/measurements/contorno-busto.jpg",
+            "image": "../assets/img/measurements/bust-circumference.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 924,
@@ -13,10 +13,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "talle-espalda",
+            "caseName": "back-length",
             "title": "Back Length",
             "description" : "Measure the length of the back from the seventh vertebra (the most prominent vertebra at the nape of the neck), following the shape of the back to the Waistline.",
-            "image": "../assets/img/measurements/talle-espalda.jpg",
+            "image": "../assets/img/measurements/back-length.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 404,
@@ -24,11 +24,11 @@ const measurementData = {
             },
         },
         {
-            "caseName": "talle-delantero",
+            "caseName": "front-length",
             "title": "Front Length",
             "description" : "Measure from the shoulder/neck point (HPS, highest point of the shoulder) to the Waistline. This is a vertical measurement that goes over the bust.\n" +
                 "Find the shoulder/neck point by wearing a simple chain necklace.",
-            "image": "../assets/img/measurements/talle-delantero.jpg",
+            "image": "../assets/img/measurements/front-length.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 466,
@@ -36,10 +36,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "largo-hombro",
+            "caseName": "shoulder-length",
             "title": "Shoulder Length",
             "description" : "Measure the shoulder length from neck base to shoulder joint.",
-            "image": "../assets/img/measurements/largo-hombro.jpg",
+            "image": "../assets/img/measurements/shoulder-length.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 78.3,
@@ -47,12 +47,12 @@ const measurementData = {
             },
         },
         {
-            "caseName": "caida-hombros",
+            "caseName": "shoulder-drop",
             "title": "Shoulder Drop",
             "description" : "Vertical measurement between the shoulder/neck point (HPS, highest point of the shoulder) to the shoulder joint. " +
                 "Place a ruler horizontally at the level of the shoulder/neck point (HPS, highest point of the shoulder) and measure the " +
                 "vertical distance from the point of the shoulder. (See Shoulder Length measurement)",
-            "image": "../assets/img/measurements/caida-hombros.jpg",
+            "image": "../assets/img/measurements/shoulder-drop.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 40,
@@ -60,10 +60,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "ancho-escote",
+            "caseName": "neckline-width",
             "title": "Neckline width",
             "description" : "Distance from 'Center line' (line of symmetry of the body) to 'Front Length' line. (See Front Length measurement).",
-            "image": "../assets/img/measurements/ancho-escote.jpg",
+            "image": "../assets/img/measurements/neckline-width.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 80,
@@ -71,10 +71,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "distancia-senos",
+            "caseName": "apex-to-apex",
             "title": "Apex to apex",
             "description" : "Measure in between the two highest points of the bust (from nipple to nipple).",
-            "image": "../assets/img/measurements/distancia-senos.jpg",
+            "image": "../assets/img/measurements/apex-to-apex.jpg",
             "patterns": ["Shirt", "Skirt", ],
             "examples": {
                 "mm": 183,
@@ -82,10 +82,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "contorno-cintura",
+            "caseName": "waist",
             "title": "Waist",
             "description" : "Measure around the narrowest part of your torso at your natural waistline.",
-            "image": "../assets/img/measurements/contorno-cintura.jpg",
+            "image": "../assets/img/measurements/waist.jpg",
             "patterns": ["Shirt", "Skirt", ],
             "examples": {
                 "mm": 669,
@@ -93,10 +93,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "cintura-seno",
+            "caseName": "apex-to-waist",
             "title": "Apex to waist",
             "description" : "The distance from the highest point of the chest to the Waistline, following the 'Front Length' line. (See Front Length)",
-            "image": "../assets/img/measurements/cintura-seno.jpg",
+            "image": "../assets/img/measurements/apex-to-waist.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 179,
@@ -104,10 +104,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "largo-brazo-ext",
+            "caseName": "overarm-length",
             "title": "Overarm Length",
             "description" : "With your arm slightly bent, measure from the shoulder joint to below the wrist bone, passing through the elbow.",
-            "image": "../assets/img/measurements/largo-brazo-ext.jpg",
+            "image": "../assets/img/measurements/overarm-length.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 565,
@@ -115,10 +115,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "largo-brazo-int",
+            "caseName": "underarm-length",
             "title": "Underarm Length",
             "description" : "From the armpit to the inside of the wrist.",
-            "image": "../assets/img/measurements/largo-brazo-int.jpg",
+            "image": "../assets/img/measurements/underarm-length.jpg",
             "patterns": ["Shirt", ],
             "examples": {
                 "mm": 468,
@@ -148,10 +148,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "cadera",
+            "caseName": "low-hip",
             "title": "Low Hip",
             "description" : "Horizontal circumference around the widest part of the hip area.",
-            "image": "../assets/img/measurements/cadera.jpg",
+            "image": "../assets/img/measurements/low-hip.jpg",
             "patterns": ["Skirt", "Trousers", ],
             "examples": {
                 "mm": 987.8,
@@ -159,10 +159,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "cintura-cadera",
+            "caseName": "waist-to-hip",
             "title": "Waist to Hip",
             "description" : "Side Waist Point to Side Hip Point, this is a vertical measurement.",
-            "image": "../assets/img/measurements/cintura-cadera.jpg",
+            "image": "../assets/img/measurements/waist-to-hip.jpg",
             "patterns": ["Skirt", "Trousers", ],
             "examples": {
                 "mm": 218,
@@ -170,10 +170,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "largo",
+            "caseName": "skirt-length",
             "title": "Skirt length",
             "description" : "Skirt length measurement will depend on the type of skirt we want to make.",
-            "image": "../assets/img/measurements/largo.jpg",
+            "image": "../assets/img/measurements/skirt-length.jpg",
             "patterns": ["Skirt", ],
             "examples": {
                 "mm": 500,
@@ -181,10 +181,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "largo-pierna",
+            "caseName": "leg-length",
             "title": "Leg Length ",
             "description" : "Vertical measurement from waist to ankle. The measuring tape should be attached to the body and along the central side of the leg.",
-            "image": "../assets/img/measurements/largo-pierna.jpg",
+            "image": "../assets/img/measurements/leg-length.jpg",
             "patterns": ["Trousers", ],
             "examples": {
                 "mm": 1079,
@@ -192,10 +192,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "altura-rodilla",
+            "caseName": "ankle-to-knee",
             "title": "Ankle to Knee",
             "description" : "Vertical measurement from ankle to knee. The measuring tape should be attached to the body and along the central side of the leg.",
-            "image": "../assets/img/measurements/altura-rodilla.jpg",
+            "image": "../assets/img/measurements/ankle-to-knee.jpg",
             "patterns": ["Trousers", ],
             "examples": {
                 "mm": 428,
@@ -203,10 +203,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "altura-cintura",
+            "caseName": "height-to-hip",
             "title": "Height to hip",
             "description" : "Vertical measurement from the floor to the hip. The measurement is preferably done with a measuring stick.",
-            "image": "../assets/img/measurements/altura-cintura.jpg",
+            "image": "../assets/img/measurements/height-to-hip.jpg",
             "patterns": ["Trousers", ],
             "examples": {
                 "mm": 1152,
@@ -214,10 +214,10 @@ const measurementData = {
             },
         },
         {
-            "caseName": "altura-entrepierna",
+            "caseName": "inseam",
             "title": "Inseam",
             "description" : "Inseam: Vertical measurement from the floor to the crotch. The measurement is preferably done with a measuring stick.",
-            "image": "../assets/img/measurements/altura-entrepierna.jpg",
+            "image": "../assets/img/measurements/inseam.jpg",
             "patterns": ["Trousers", ],
             "examples": {
                 "mm": 879,
@@ -231,7 +231,7 @@ const measurementData = {
 //Height to hip: Vertical measurement from the floor to the hip. The measurement is preferably done with a measuring stick.
 
 function getHorizontalDistance(fromPoint, toPoint) {
-    let distance = 0;
+    let distance;
 
     // toPoint is to the right of fromPoint
     if (toPoint.x >= fromPoint.x) {
@@ -244,16 +244,14 @@ function getHorizontalDistance(fromPoint, toPoint) {
 }
 
 function flipYPoint(pointOfSymmetry, point) {
-    let offset = 0;
+    let offset;
 
     offset = getHorizontalDistance(pointOfSymmetry, point);
-    const result = new Point(pointOfSymmetry.x + offset, point.y);
-
-    return result;
+    return new Point(pointOfSymmetry.x + offset, point.y);
 }
 
 function flipYLine(pointOfSymmetry, line) {
-    let offset = 0;
+    let offset;
 
     let symBeginPoint = line.getBeginPoint();
     offset = getHorizontalDistance(pointOfSymmetry, symBeginPoint);
@@ -263,9 +261,7 @@ function flipYLine(pointOfSymmetry, line) {
     offset = getHorizontalDistance(pointOfSymmetry, symEndPoint);
     symEndPoint = new Point(pointOfSymmetry.x + offset, symEndPoint.y);
 
-    const result = new Line(symBeginPoint, symEndPoint);
-
-    return result;
+    return new Line(symBeginPoint, symEndPoint);
 }
 
 
@@ -341,7 +337,7 @@ function getEndPointName(objName) {
 function normalizeDegree(degree= 0.0) {
     let isNegative = degree < 0;
     let absDegree = Math.abs(degree);
-    let result = 0.0;
+    let result;
 
     while (absDegree >= 360) {
         absDegree = absDegree - 360;
@@ -369,22 +365,22 @@ function getOrientation(degree= 0.0) {
     if (degree != null && !isNaN(degree)) {
         if (degree >= 0 && degree < 90) {
             orientation = "tl";
-            if (degree == 0) {
+            if (degree === 0) {
                 orientation = "t";
             }
         } else if (degree >= 90 && degree < 180) {
             orientation = "bl";
-            if (degree == 90) {
+            if (degree === 90) {
                 orientation = "l";
             }
         } else if (degree >= 180 && degree < 270) {
             orientation = "br";
-            if (degree == 180) {
+            if (degree === 180) {
                 orientation = "b";
             }
         } else if (degree >= 270 && degree < 360) {
             orientation = "tr";
-            if (degree == 270) {
+            if (degree === 270) {
                 orientation = "r";
             }
         }
@@ -487,4 +483,53 @@ function isCanvasBlank(canvas) {
     );
 
     return !pixelBuffer.some(color => color !== 0);
+}
+
+
+const LEVELS = {
+    ALL: 5,
+    DEBUG: 4,
+    INFO: 3,
+    WARN: 2,
+    ERROR: 1,
+};
+
+Object.freeze(LEVELS);
+
+const levelConfig = LEVELS.ERROR;
+
+class Logger {
+    #level;
+    constructor() {
+        if (Logger._instance) {
+            return Logger._instance;
+        }
+        Logger._instance = this;
+        this.#level = levelConfig;
+    }
+
+    debug (msg='') {
+        if (this.#level >= LEVELS.DEBUG) {
+            console.log(msg);
+        }
+    }
+
+    info (msg='') {
+        if (this.#level >= LEVELS.INFO) {
+            console.log(msg);
+        }
+    }
+
+    warn (msg='') {
+        if (this.#level >= LEVELS.WARN) {
+            console.log(msg);
+        }
+    }
+
+    error (msg='') {
+        if (this.#level >= LEVELS.ERROR) {
+            console.log(msg);
+        }
+    }
+
 }
