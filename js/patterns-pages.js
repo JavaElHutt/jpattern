@@ -104,72 +104,72 @@ function convertMeasurementsToInches(patternType) {
 }
 
 function drawShirt(canvas, zoom) {
-        // Medidas del cuerpo
-        const contornoBusto = parseFloat(document.getElementById("contorno-busto").value);
-        const talleEspalda = parseFloat(document.getElementById("talle-espalda").value);
-        const talleDelantero = parseFloat(document.getElementById("talle-delantero").value);
-        const largoHombro = parseFloat(document.getElementById("largo-hombro").value);
-        const caidaHombros = parseFloat(document.getElementById("caida-hombros").value);
-        const anchoEscote = parseFloat(document.getElementById("ancho-escote").value);
-        const distanciaSenos = parseFloat(document.getElementById("distancia-senos").value);
-        const contornoCintura = parseFloat(document.getElementById("contorno-cintura").value);
-        const cinturaSeno = parseFloat(document.getElementById("cintura-seno").value);
+        // Body measurements
+        const bustCircumference = parseFloat(document.getElementById("bust-circumference").value);
+        const backLength = parseFloat(document.getElementById("back-length").value);
+        const frontLength = parseFloat(document.getElementById("front-length").value);
+        const shoulderLength = parseFloat(document.getElementById("shoulder-length").value);
+        const shoulderDrop = parseFloat(document.getElementById("shoulder-drop").value);
+        const necklineWidth = parseFloat(document.getElementById("neckline-width").value);
+        const apexToApex = parseFloat(document.getElementById("apex-to-apex").value);
+        const waist = parseFloat(document.getElementById("waist").value);
+        const apexToWaist = parseFloat(document.getElementById("apex-to-waist").value);
 
-        // Medidas para manga
-        const largoBrazoExt = parseFloat(document.getElementById("largo-brazo-ext").value);
-        const largoBrazoInt = parseFloat(document.getElementById("largo-brazo-int").value);
+        // Measurements for sleeve
+        const overarmLength = parseFloat(document.getElementById("overarm-length").value);
+        const underarmLength = parseFloat(document.getElementById("underarm-length").value) - 30; // 30 is subtracted as a correction for the armhole
         const armCircumference = parseFloat(document.getElementById("arm-circumference").value);
         const wristCircumference = parseFloat(document.getElementById("wrist-circumference").value);
 
-        setCanvasDimensions(canvas, zoom, contornoBusto, largoBrazoExt);
+        setCanvasDimensions(canvas, zoom, bustCircumference, overarmLength);
 
-        // limpiamos el canvas antes de comenzar a pintar
+        // Cleaning the canvas before starting to paint.
         const painter = new Painter(canvas, zoom);
         painter.clearAll();
 
-        const shirt = new Shirt(contornoBusto, talleEspalda, talleDelantero, largoHombro, caidaHombros,
-            anchoEscote, distanciaSenos, contornoCintura, cinturaSeno, largoBrazoExt,
-            largoBrazoInt, armCircumference, wristCircumference,);
+        const shirt = new Shirt(bustCircumference, backLength, frontLength, shoulderLength, shoulderDrop,
+            necklineWidth, apexToApex, waist, apexToWaist, overarmLength,
+            underarmLength, armCircumference, wristCircumference,);
 
         painter.drawObject(shirt);
 }
 
 
 function drawSkirt(canvas, zoom) {
-    const contornoCintura = parseFloat(document.getElementById("contorno-cintura").value);
-    const contornoCadera = parseFloat(document.getElementById("cadera").value);
-    const distCinturaCadera = parseFloat(document.getElementById("cintura-cadera").value);
-    const largoFalda = parseFloat(document.getElementById("largo").value);
-    const distanciaSenos = parseFloat(document.getElementById("distancia-senos").value);
+    const waist = parseFloat(document.getElementById("waist").value);
+    const lowHip = parseFloat(document.getElementById("low-hip").value);
+    const waistToHip = parseFloat(document.getElementById("waist-to-hip").value);
+    const skirtLength = parseFloat(document.getElementById("skirt-length").value);
+    const apexToApex = parseFloat(document.getElementById("apex-to-apex").value);
 
-    setCanvasDimensions(canvas, zoom, contornoCadera / 1.5, largoFalda);
+    setCanvasDimensions(canvas, zoom, lowHip / 1.5, skirtLength);
 
-    // limpiamos el canvas antes de comenzar a pintar
+    // Cleaning the canvas before starting to paint.
     const painter = new Painter(canvas, zoom);
     painter.clearAll();
 
-    const skirt = new Skirt(contornoCintura, contornoCadera, distCinturaCadera, largoFalda, distanciaSenos);
+    const skirt = new Skirt(waist, lowHip, waistToHip, skirtLength, apexToApex);
 
     painter.drawObject(skirt);
 }
 
 
 function drawTrousers(canvas, zoom) {
-    // Distancias fijas (el resto de distancias son relativas a estas)
-    const contornoCadera = parseFloat(document.getElementById("cadera").value);
-    const distCinturaCadera = parseFloat(document.getElementById("cintura-cadera").value);
-    const largoPantalon = parseFloat(document.getElementById("largo-pierna").value);
-    const alturaRodilla = parseFloat(document.getElementById("altura-rodilla").value);
-    const alturaCintura = parseFloat(document.getElementById("altura-cintura").value);
-    const alturaEntrepierna = parseFloat(document.getElementById("altura-entrepierna").value);
+    //Fixed distances (the rest of the distances are relative to these)
+    const lowHip = parseFloat(document.getElementById("low-hip").value);
+    const waistToHip = parseFloat(document.getElementById("waist-to-hip").value);
+    const legLength = parseFloat(document.getElementById("leg-length").value);
+    const ankleToKnee = parseFloat(document.getElementById("ankle-to-knee").value);
+    const heightToHip = parseFloat(document.getElementById("height-to-hip").value);
+    const inseam = parseFloat(document.getElementById("inseam").value);
 
-    setCanvasDimensions(canvas, zoom, contornoCadera, alturaCintura);
+    setCanvasDimensions(canvas, zoom, lowHip, heightToHip);
 
-    // limpiamos el canvas antes de comenzar a pintar
+    // Cleaning the canvas before starting to paint.
     const painter = new Painter(canvas, zoom);
     painter.clearAll();
 
-    const trousers = new Trousers(contornoCadera, distCinturaCadera, largoPantalon, alturaRodilla, alturaCintura, alturaEntrepierna);
+    const trousers = new Trousers(lowHip, waistToHip, legLength, ankleToKnee, heightToHip, inseam);
     painter.drawObject(trousers);
 }
 
@@ -319,7 +319,7 @@ function resizeFunction() {
 }
 
 function changeNavBarSecondary() {
-    let textColor = "#cac6c4";
+    let textColor;
 
     if (document.documentElement.scrollTop > 20 || window.outerWidth < 992) {
         document.getElementById("secondaryNavBar").style.backgroundColor = "#fff";
