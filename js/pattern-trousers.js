@@ -1,3 +1,29 @@
+/**
+ * Each pattern of a garment is made up of a 'piece' or subpattern, for example,
+ * the shirt pattern is made up of a 'front pattern', another 'back pattern' and
+ * the piece that makes up the 'sleeve'.
+ * In turn, each subpattern is formed by lines (straight or curved) and darts.
+ * A set of auxiliary lines, dashed lines and points are optionally drawn.
+ * Only the fields of the class that are named line_A_B are needed, where 'A'
+ * would represent the origin point and 'B' would be the end point of the line.
+ * If a '_' is included in the name of a class field, the start and end points
+ * will be used to label them during the drawing process, otherwise
+ * the line will not display the labels of its constituent points.
+ * The position of point labels on a line is calculated taking into account
+ * the direction of the line, which is determined during the creation
+ * of a line, depending on the origin and destination point of the line.
+ *
+ * For example:
+ *      const line = new line (beginPoint, endPoint);
+ *      ...is different from:
+ *      const line = new line (endPoint, beginPoint);
+ *      The lines will have opposite directions.
+ *
+ * The order of the fields within the class determine the order in which
+ * the elements of a pattern will be painted (lines, darts, curved lines, etc.)
+ */
+
+
 
 // Secondary measures. In most patterns, they tend to be somewhat random measurements, defined
 // by the designers after years of experience and experimentation, which have been defined following
@@ -38,7 +64,16 @@ class PatternTrousersFront {
     point_D1;
     point_C1;
     pointOB1;
+    labelFRONT;
 
+
+    get labelFRONT() {
+        return this.labelFRONT;
+    }
+
+    set labelFRONT(value) {
+        this.labelFRONT = value;
+    }
 
     get pointOB1() {
         return this.pointOB1;
@@ -269,6 +304,16 @@ class PatternTrousersBack {
     pointOA2;
     pointC6;
     pointD4;
+    labelBACK;
+
+
+    get labelBACK() {
+        return this.labelBACK;
+    }
+
+    set labelBACK(value) {
+        this.labelBACK = value;
+    }
 
     get pointD4() {
         return this.pointD4;
@@ -485,7 +530,7 @@ class PatternTrousersBack {
     set auxiliaryLineB2A2(value) {
         this.auxiliaryLine_B2_A2 = value;
     }
-}
+} // end of class patternTrousersBack
 
 class Trousers {
     patternTrousersFront;
@@ -625,6 +670,9 @@ class Trousers {
         this.patternTrousersFront.pointD1 = pointD1;
         this.patternTrousersFront.pointC1 = pointC1;
         this.patternTrousersFront.pointOB1 = pointOB1;
+
+        const lineD4D7 = new Line(pointD1, pointD3);
+        this.patternTrousersFront.labelFRONT = new Label(lineD4D7.getMiddlePoint(), 'b', 'FRONT');
     }
 
     createBackPattern() {
@@ -740,6 +788,9 @@ class Trousers {
         this.patternTrousersBack.pointOA2 = pointOA2;
         this.patternTrousersBack.pointC6 = pointC6;
         this.patternTrousersBack.pointD4 = pointD4;
+
+        const lineD4D7 = new Line(pointD4, pointD7);
+        this.patternTrousersBack.labelBACK = new Label(lineD4D7.getMiddlePoint(), 'b', 'BACK');
     }
 
     get patternTrousersFront() {
@@ -754,4 +805,4 @@ class Trousers {
         return [this.patternTrousersFront, this.patternTrousersBack];
     }
 
-}
+} // end of class Trousers

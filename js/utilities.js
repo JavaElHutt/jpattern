@@ -1,4 +1,5 @@
-// JSON object
+// JSON object which stores the configuration information for the information modals.
+// Also used for loading example measurements of the standards.
 const measurementData = {
     "measurements": [
         {
@@ -227,9 +228,12 @@ const measurementData = {
     ],
 }
 
-
-//Height to hip: Vertical measurement from the floor to the hip. The measurement is preferably done with a measuring stick.
-
+/**
+ * Given two points we calculate their horizontal distance between them.
+ * @param fromPoint measurement origin point
+ * @param toPoint end point of measurement (up to where we measure)
+ * @returns distance between them (horizontal)
+ */
 function getHorizontalDistance(fromPoint, toPoint) {
     let distance;
 
@@ -243,6 +247,21 @@ function getHorizontalDistance(fromPoint, toPoint) {
     return distance;
 }
 
+/**
+ * We calculate the symmetrical point of another, with respect to the Y coordinate axis,
+ * taking a point as the origin of symmetry.
+ *
+ *            point
+ *              of
+ *           symmetry
+ *              |
+ *     A        |        B (symmetrical point of A)
+ *              |
+ *
+ * @param pointOfSymmetry relative to the Y coordinate axis
+ * @param point point of which we want to calculate its symmetry
+ * @returns symmetrical point of point
+ */
 function flipYPoint(pointOfSymmetry, point) {
     let offset;
 
@@ -266,6 +285,7 @@ function flipYLine(pointOfSymmetry, line) {
 
 
 /**
+ * Function to round floating point numbers.
  * http://www.linuxhispano.net/2013/06/12/redondear-numeros-decimales-en-javascript/
  */
 function roundNumber(number, decimals = 3) {
@@ -273,34 +293,12 @@ function roundNumber(number, decimals = 3) {
     return  Math.round(aux * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
 
-
-/**
- * https://stackoverflow.com/questions/14488849/higher-dpi-graphics-with-html5-canvas
- */
-function setDPI(canvas, dpi) {
-    // Set up CSS size.
-    canvas.style.width = canvas.style.width || canvas.width + 'px';
-    canvas.style.height = canvas.style.height || canvas.height + 'px';
-
-    // Resize canvas and scale future draws.
-    const scaleFactor = dpi / 96;
-    canvas.width = Math.ceil(canvas.width * scaleFactor);
-    canvas.height = Math.ceil(canvas.height * scaleFactor);
-    const ctx = canvas.getContext('2d', {willReadFrequently: true});
-    ctx.scale(scaleFactor, scaleFactor);
-
-    return ctx;
-}
-
-// http://w3.unpocodetodo.info/lab/angulos.php
-function fromDegreesToRadians(degrees) {
-    return degrees * (Math.PI / 180);
-}
-
+// Function to transform angles expressed in radians to degrees
 function fromRadiansToDegrees(radians) {
     return radians * (180 / Math.PI);
 }
 
+// Function to get the name of an individual point or the start or end points of a line.
 function getPointName(objName, num_case= 1) {
     let name = '';
     const typeOfObjName = typeof objName;
@@ -485,7 +483,7 @@ function isCanvasBlank(canvas) {
     return !pixelBuffer.some(color => color !== 0);
 }
 
-
+// Logger for the application
 const LEVELS = {
     ALL: 5,
     DEBUG: 4,
@@ -496,7 +494,7 @@ const LEVELS = {
 
 Object.freeze(LEVELS);
 
-const levelConfig = LEVELS.ERROR;
+const levelConfig = LEVELS.DEBUG;
 
 class Logger {
     #level;

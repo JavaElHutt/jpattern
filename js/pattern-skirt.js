@@ -1,3 +1,27 @@
+/**
+ * Each pattern of a garment is made up of a 'piece' or subpattern, for example,
+ * the shirt pattern is made up of a 'front pattern', another 'back pattern' and
+ * the piece that makes up the 'sleeve'.
+ * In turn, each subpattern is formed by lines (straight or curved) and darts.
+ * A set of auxiliary lines, dashed lines and points are optionally drawn.
+ * Only the fields of the class that are named line_A_B are needed, where 'A'
+ * would represent the origin point and 'B' would be the end point of the line.
+ * If a '_' is included in the name of a class field, the start and end points
+ * will be used to label them during the drawing process, otherwise
+ * the line will not display the labels of its constituent points.
+ * The position of point labels on a line is calculated taking into account
+ * the direction of the line, which is determined during the creation
+ * of a line, depending on the origin and destination point of the line.
+ *
+ * For example:
+ *      const line = new line (beginPoint, endPoint);
+ *      ...is different from:
+ *      const line = new line (endPoint, beginPoint);
+ *      The lines will have opposite directions.
+ *
+ * The order of the fields within the class determine the order in which
+ * the elements of a pattern will be painted (lines, darts, curved lines, etc.)
+ */
 
 
 // Secondary measures. In most patterns, they tend to be somewhat random measurements, defined
@@ -26,7 +50,15 @@ class PatternBackSkirt {
     line_O_I;
     line_O_P;
     dottedLine_P_M;
+    labelBACK;
 
+    get labelBACK() {
+        return this.labelBACK;
+    }
+
+    set labelBACK(value) {
+        this.labelBACK = value;
+    }
 
     get lineOP() {
         return this.line_O_P;
@@ -100,7 +132,7 @@ class PatternBackSkirt {
         this.curveLine_I_J = value;
     }
 
-}
+} // end of class PatternBackSkirt
 
 class PatternFrontSkirt {
     line_A_B;
@@ -112,7 +144,16 @@ class PatternFrontSkirt {
     line_G_A;
     line_G_H;
     dottedLine_H_E;
+    labelFRONT;
 
+
+    get labelFRONT() {
+        return this.labelFRONT;
+    }
+
+    set labelFRONT(value) {
+        this.labelFRONT = value;
+    }
 
     get lineGH() {
         return this.line_G_H;
@@ -186,7 +227,7 @@ class PatternFrontSkirt {
         this.line_G_A = value;
     }
 
-}
+} // end of class PatternFrontSkirt
 
 
 class Skirt {
@@ -255,6 +296,8 @@ class Skirt {
 
         // lineGH
         this.patternFrontSkirt.lineGH = new Line(lineFG.getEndPoint(), dottedLineHE.getBeginPoint());
+
+        this.patternFrontSkirt.labelFRONT = new Label(dottedLineHE.getMiddlePoint(), 'b', 'FRONT');
     }
 
     createBackPattern() {
@@ -316,6 +359,7 @@ class Skirt {
         // lieOP
         this.patternBackSkirt.lineOP = new Line(lineNO.getEndPoint(), dottedLinePM.getBeginPoint());
 
+        this.patternBackSkirt.labelBACK = new Label(dottedLinePM.getMiddlePoint(), 'b', 'BACK');
     }
 
     get patternFrontSkirt() {
@@ -330,4 +374,4 @@ class Skirt {
         return [this.patternFrontSkirt, this.patternBackSkirt];
     }
 
-}
+} // end of class Skirt

@@ -1,3 +1,23 @@
+/******************************************************************
+ * Set of utility functions used in pattern web pages.
+ * They contain functions to perform tasks such as...
+ * - Validate data collection forms.
+ * - Show error messages to the user.
+ * - Define the functions that start the pattern drawing process.
+ ******************************************************************/
+
+
+
+/**
+ * Validates the data entered the pattern creation forms.
+ * If blank spaces are entered, they are eliminated, and it is verified that the type of data
+ * entered in a text field is numeric.
+ * In the event that no numbers are entered or if the field is left empty (after removing blanks),
+ * validation will fail.
+ *
+ * @param formToValidate the from to validate
+ * @returns {boolean} true if the validation were OK
+ */
 function validateForm(formToValidate) {
     const formElements = formToValidate.elements;
 
@@ -18,6 +38,12 @@ function validateForm(formToValidate) {
     return isValid;
 }
 
+/**
+ * Operations that are performed by clicking on the metric unit selector.
+ * When changing units, both the canvas and the data entered in the form must be reset.
+ * The value is saved in a hidden variable named: units + patternType. (example: unitsTrousers)
+ * @param patternType can be one of three types of pattern
+ */
 function setMeasurementUnit(patternType) {
     let checkUnits = document.getElementById('checkUnits' + patternType);
     let unitsTxt = document.getElementById('unitsTxt' + patternType);
@@ -38,21 +64,29 @@ function setMeasurementUnit(patternType) {
     clearDrawing(patternType);
 }
 
+/**
+ * Gets the value saved in the hidden variable named: units + patternType. (example: unitsTrousers)
+ * @param patternType can be one of three types of pattern
+ * @returns the value of the hidden variable
+ */
 function getMeasurementUnit(patternType) {
-    // establecemos las unidades de medida (afectará al DPI del canvas)
+    // we establish the units of measurement (it will affect the DPI of the canvas)
     return document.getElementById('units' + patternType).value;
 }
 
+/**
+ * Based on the name of the pattern we want to draw, the corresponding drawing method is invoked.
+ * A pattern will only be painted if all the measurement information is available.
+ * @param patternType can be one of three types of pattern (Shirt, Skirt or Trousers)
+ */
 function draw(patternType) {
     const form = document.getElementById('form' + patternType);
     const isValidForm = validateForm(form);
     if (!isValidForm) {
         showAlertModal('Verify that all fields contain valid measurement data before building the pattern.');
     } else {
-        let measurementUnit = getMeasurementUnit(patternType);
-
         // To unify concepts and simplify calculations, it was decided to use a single unit of measurement behind the scenes (millimeters)
-        convertMeasurementsToMillimeters(form, measurementUnit);
+        convertMeasurementsToMillimeters(patternType);
 
         const canvas = document.getElementById('canvas' + patternType);
         const zoom = parseFloat(document.getElementById('zoom' + patternType).value);
@@ -73,16 +107,21 @@ function draw(patternType) {
 
     }
 
-    return isValidForm;
 }
 
-function convertMeasurementsToMillimeters(form, measurementUnit) {
+/**
+ * Converts the measurements of a pattern to millimeters, that is, it transforms the values of the text boxes.
+ * @param patternType can be one of three types of pattern (Shirt, Skirt or Trousers)
+ */
+function convertMeasurementsToMillimeters(patternType) {
+    let measurementUnit = getMeasurementUnit(patternType);
     let factorConversion = 1;
 
     if (measurementUnit === 'in') {
         factorConversion = 25.4;
     }
 
+    const form = document.getElementById('form' + patternType);
     const formElements = form.elements;
 
     for(let i = 0; i < formElements.length; i++) {
@@ -92,6 +131,10 @@ function convertMeasurementsToMillimeters(form, measurementUnit) {
     }
 }
 
+/**
+ * Converts the measurements of a pattern to inches, that is, it transforms the values of the text boxes.
+ * @param patternType can be one of three types of pattern (Shirt, Skirt or Trousers)
+ */
 function convertMeasurementsToInches(patternType) {
     const form = document.getElementById('form' + patternType);
     const formElements = form.elements;
@@ -103,6 +146,12 @@ function convertMeasurementsToInches(patternType) {
     }
 }
 
+/**
+ * We collect the values entered by the user in the text boxes and with this data we create the JavaScript
+ * object that represents the pattern. Finally, we pass it to the Painter object to draw it on the canvas.
+ * @param canvas the HTML canvas object
+ * @param zoom the value of the <select> (zoom) of the pattern creation form
+ */
 function drawShirt(canvas, zoom) {
         // Body measurements
         const bustCircumference = parseFloat(document.getElementById("bust-circumference").value);
@@ -134,7 +183,12 @@ function drawShirt(canvas, zoom) {
         painter.drawObject(shirt);
 }
 
-
+/**
+ * We collect the values entered by the user in the text boxes and with this data we create the JavaScript
+ * object that represents the pattern. Finally, we pass it to the Painter object to draw it on the canvas.
+ * @param canvas the HTML canvas object
+ * @param zoom the value of the <select> (zoom) of the pattern creation form
+ */
 function drawSkirt(canvas, zoom) {
     const waist = parseFloat(document.getElementById("waist").value);
     const lowHip = parseFloat(document.getElementById("low-hip").value);
@@ -153,7 +207,12 @@ function drawSkirt(canvas, zoom) {
     painter.drawObject(skirt);
 }
 
-
+/**
+ * We collect the values entered by the user in the text boxes and with this data we create the JavaScript
+ * object that represents the pattern. Finally, we pass it to the Painter object to draw it on the canvas.
+ * @param canvas the HTML canvas object
+ * @param zoom the value of the <select> (zoom) of the pattern creation form
+ */
 function drawTrousers(canvas, zoom) {
     //Fixed distances (the rest of the distances are relative to these)
     const lowHip = parseFloat(document.getElementById("low-hip").value);
@@ -175,6 +234,13 @@ function drawTrousers(canvas, zoom) {
 
 // Making INFO modals dynamic
 const infoModal = document.getElementById('infoModal');
+
+/**
+ * The information that is loaded into the information modal is obtained from
+ * the configuration JSON object named 'measurementData'.
+ * The type of information that is loaded dynamically is: title of the modal
+ * and body of the modal (description of how to take the measurement and reference image).
+ */
 infoModal.addEventListener('show.bs.modal', function (event) {
     // Button that triggered the modal
     const button = event.relatedTarget;
@@ -208,6 +274,10 @@ infoModal.addEventListener('show.bs.modal', function (event) {
     modalBody.append(image);
 });
 
+/**
+ * Function that is launched when clicking on the image download button
+ * @param patternType can be one of three types of pattern (Shirt, Skirt or Trousers)
+ */
 function downloadImage(patternType) {
     // Retrieve reference to canvas
     const canvas = document.getElementById('canvas' + patternType);
@@ -219,6 +289,10 @@ function downloadImage(patternType) {
     }
 }
 
+/**
+ * Function to show the modal with alert messages
+ * @param msg message to show
+ */
 function showAlertModal(msg) {
     let alertModal =  new bootstrap.Modal(document.getElementById('alertModal'), {});
     const modalBody = document.getElementById('alertBody');
@@ -226,6 +300,11 @@ function showAlertModal(msg) {
     alertModal.show();
 }
 
+/**
+ * Function that is invoked when clicking on the "Load Example" button. The information
+ * is taken from the 'measurementData' configuration JSON object.
+ * @param patternType can be one of three types of pattern (Shirt, Skirt or Trousers)
+ */
 function loadExample(patternType) {
     let unit = getMeasurementUnit(patternType);
 
@@ -248,6 +327,10 @@ function loadExample(patternType) {
     }
 }
 
+/**
+ * Cleaning the canvas of a pattern, in order to update the drawing.
+ * @param patternType can be one of three types of pattern (Shirt, Skirt or Trousers)
+ */
 function clearDrawing(patternType) {
     const canvas = document.getElementById('canvas' + patternType);
     const zoom = parseFloat(document.getElementById('zoom' + patternType).value);
@@ -265,78 +348,4 @@ function clearDrawing(patternType) {
     context.restore();
     canvas.width = 0;
     canvas.height = 0;
-}
-
-const idPage = document.getElementsByClassName("pattern-page")[0].id;
-const enlaces = document.getElementsByClassName('nav-link');
-const brandText = document.getElementsByClassName('navbar-brand');
-let casePage = -1;
-
-
-document.addEventListener("DOMContentLoaded", function(event) {
-    if (idPage === 'shirt-page') {
-        casePage = 2; // position of links in navbar (firs element is 0)
-    } else if (idPage === 'skirt-page') {
-        casePage = 3;
-    } else if (idPage === 'trousers-page') {
-        casePage = 4;
-    } else {
-        casePage = 0;
-    }
-
-    resizeFunction();
-})
-
-window.onscroll = function() {
-    changeNavBarSecondary();
-};
-
-window.onresize = function() {
-    resizeFunction();
-};
-
-function resizeFunction() {
-    let enlaces = document.getElementsByClassName('nav-link');
-    let textColor = "#6e777f";
-    let textPadding = "0.75rem 0";
-
-    if (window.outerWidth < 992) {
-        document.getElementById("secondaryNavBar").style.backgroundColor = "#fff";
-        document.getElementsByClassName('navbar-brand')[0].style.color = "#212529";
-    } else {
-        document.getElementById("secondaryNavBar").style.backgroundColor = "#655a53";
-        document.getElementsByClassName('navbar-brand')[0].style.color = "#cac6c4";
-        textPadding  = "0 1rem";
-        textColor = "#cac6c4";
-    }
-
-    for(let i = 0; i < enlaces.length; i++) {
-        enlaces[i].style.color = textColor;
-        enlaces[i].style.padding = textPadding;
-    }
-
-    enlaces[casePage].style.color = "#f4623a";
-}
-
-function changeNavBarSecondary() {
-    let textColor;
-
-    if (document.documentElement.scrollTop > 20 || window.outerWidth < 992) {
-        document.getElementById("secondaryNavBar").style.backgroundColor = "#fff";
-        textColor = "#212529";
-
-        if (window.outerWidth < 992) {
-            textColor = "#6e777f";
-        }
-    } else {
-        document.getElementById("secondaryNavBar").style.backgroundColor = "#655a53";
-        textColor = "#cac6c4";
-    }
-
-    for(let i = 0; i < enlaces.length; i++) {
-        enlaces[i].style.color = textColor;
-    }
-
-    enlaces[casePage].style.color = "#f4623a";
-    brandText[0].style.color = textColor;
 }

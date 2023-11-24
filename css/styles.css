@@ -11015,3 +11015,12 @@ header.masthead h1, header.masthead .h1 {
 .fs-7 {
   font-size: 0.8rem !important;
 }
+
+.link-active {
+  color: #f4623a !important;
+}
+
+.font-navbar {
+  font-family: "Merriweather Sans";
+  font-weight: bold;
+}

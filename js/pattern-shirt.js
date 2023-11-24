@@ -1,3 +1,30 @@
+/**
+ * Each pattern of a garment is made up of a 'piece' or subpattern, for example,
+ * the shirt pattern is made up of a 'front pattern', another 'back pattern' and
+ * the piece that makes up the 'sleeve'.
+ * In turn, each subpattern is formed by lines (straight or curved) and darts.
+ * A set of auxiliary lines, dashed lines and points are optionally drawn.
+ * Only the fields of the class that are named line_A_B are needed, where 'A'
+ * would represent the origin point and 'B' would be the end point of the line.
+ * If a '_' is included in the name of a class field, the start and end points
+ * will be used to label them during the drawing process, otherwise
+ * the line will not display the labels of its constituent points.
+ * The position of point labels on a line is calculated taking into account
+ * the direction of the line, which is determined during the creation
+ * of a line, depending on the origin and destination point of the line.
+ *
+ * For example:
+ *      const line = new line (beginPoint, endPoint);
+ *      ...is different from:
+ *      const line = new line (endPoint, beginPoint);
+ *      The lines will have opposite directions.
+ *
+ * The order of the fields within the class determine the order in which
+ * the elements of a pattern will be painted (lines, darts, curved lines, etc.)
+ */
+
+
+
 
 
 // Secondary measures. In most patterns, they tend to be somewhat random measurements, defined
@@ -27,7 +54,15 @@ class PatternBackShirt {
     dart_J2_K2;
     line_K2_C3;
     line_C3_G2;
+    labelBACK;
 
+    get labelBACK() {
+        return this.labelBACK;
+    }
+
+    set labelBACK(value) {
+        this.labelBACK = value;
+    }
 
     get auxiliaryLineJ2K2() {
         return this.auxiliaryLine_J2_K2;
@@ -161,7 +196,15 @@ class PatternFrontShirt {
     line_C2_G1;
     line_C2_C1;
     dottedLine_C1_H1;
+    labelFRONT;
 
+    get labelFRONT() {
+        return this.labelFRONT;
+    }
+
+    set labelFRONT(value) {
+        this.labelFRONT = value;
+    }
 
     get auxiliaryLineJ1K1() {
         return this.auxiliaryLine_J1_K1;
@@ -326,6 +369,16 @@ class PatternSleeveShirt {
     point_P21;
     point_P22;
     point_P23;
+    labelSLEEVE;
+
+
+    get labelSLEEVE() {
+        return this.labelSLEEVE;
+    }
+
+    set labelSLEEVE(value) {
+        this.labelSLEEVE = value;
+    }
 
     get pointP23() {
         return this.point_P23;
@@ -602,6 +655,9 @@ class Shirt {
         this.patternFrontShirt.auxiliaryLineJ1K1 =  new Line(pointJ1, pointK1);
         this.patternFrontShirt.lineC2C1 = new Line(pointC2, pointC1);
         this.patternFrontShirt.dottedLineC1H1 = new Line(pointC1, pointH1);
+
+        // Label
+        this.patternFrontShirt.labelFRONT = new Label(lineC2H2.getMiddlePoint(), 'b', 'FRONT');
     } // end of createFrontPattern()
 
     createBackPattern() {
@@ -701,7 +757,10 @@ class Shirt {
         this.patternBackShirt.lineK2C3 = lineK2C3;
         this.patternBackShirt.lineK2C3 = lineK2C3;
         this.patternBackShirt.lineC3G2 = lineC3G2;
-    }
+
+        // Label
+        this.patternBackShirt.labelBACK = new Label(lineC3H3.getMiddlePoint(), 'b', 'BACK');
+    } // end of createBackPattern
 
     createSleevePattern() {
         const tolerance = 5;
@@ -857,7 +916,7 @@ class Shirt {
         } while (!matchArmholeFront);
 
 
-        /***** After performing the calculations, we add the calculated elements to the back pattern. *****/
+        /***** After performing the calculations, we add the calculated elements to the sleeve pattern. *****/
         this.patternSleeveShirt.lineC4D3 = lineC4D3;
         this.patternSleeveShirt.dottedLineD3A3 = new Line(pointD3, pointA3);
         this.patternSleeveShirt.lineD4C5 = new Line(pointD4, pointC5);
@@ -870,7 +929,6 @@ class Shirt {
         this.patternSleeveShirt.curveLineP12A3 = curveLineP12A3;
         this.patternSleeveShirt.lineC5C4 = new Line(pointC5, pointC4);
         
-        
         // Points
         this.patternSleeveShirt.pointP11 = pointP11;
         this.patternSleeveShirt.pointP12 = pointP12;
@@ -878,7 +936,10 @@ class Shirt {
         this.patternSleeveShirt.pointP21 = pointP21;
         this.patternSleeveShirt.pointP22 = pointP22;
         this.patternSleeveShirt.pointP23 = pointP23;
-    }
+
+        // Label
+        this.patternSleeveShirt.labelSLEEVE = new Label(pointB3, 'b', 'SLEEVE');
+    } // end of createSleevePattern
 
     get patternFrontShirt() {
         return this.patternFrontShirt;

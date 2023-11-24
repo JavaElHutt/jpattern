@@ -1,4 +1,3 @@
-/* jshint esversion: 6 */
 
 
 /**
@@ -9,14 +8,11 @@ function Point(x, y, name) {
     this.x = roundNumber(x, 2);
     this.y = roundNumber(y, 2);
     this.name = name || '';
-    this.label = {
-        value: '',
-        orientation: '',
-    };
+    this.label = new Label(this);
 
-    this.setLabel = function(value, orientation) {
-        this.label.value = value;
-        this.label.orientation = orientation;
+    this.setLabel = function(value, position) {
+        this.label.setText(value);
+        this.label.setPosition(position)
     };
 
     this.getLabel = function() {
@@ -35,6 +31,9 @@ function Point(x, y, name) {
 
 
 /**
+ * Object that allows us to manage lines and calculate distances between points.
+ * We can create lines from two points (start and end), or by providing an origin point,
+ * a distance and (if specified) the angle the line should have, with respect to the horizontal.
  * Way to draw a line given an angle. Reference:
  * @author Floris (https://stackoverflow.com/users/1967396/floris)
  * https://stackoverflow.com/questions/23598547/draw-a-line-from-x-y-with-a-given-angle-and-length
@@ -143,7 +142,28 @@ function Line(arg0, arg1, arg2, arg3) {
 
 } // end of Line
 
-
+/**
+ * Curves in traditional sewing patterns are drawn using curved rulers, joining two points.
+ * The instructions on how to make a pattern usually indicate: "join the two points with the curved ruler."
+ * The curves in the patterns usually always have the same appearance, which is why we have tried to emulate
+ * that shape in the patterns made in the application.
+ * To understand the curved lines of the patterns we can imagine that we take a straight line,
+ * to which we apply pressure to curve it a certain amount (offset) and that they are oriented (facing)
+ * towards a certain position, which is what provides the curve deformation. This deformation will be done
+ * to adapt the curve to the pattern drawing represented in the creation instructions.
+ *
+ * Example: if we want to draw the armhole of the front pattern of the blouse, we will calculate the
+ * line that goes from point F1 to I1, we will push it towards the inner part of the pattern by pulling
+ * it down (position) a certain amount (offset). (See Basic Body Pattern running the application).
+ *
+ * To understand how they are drawn see the drawCurveLine() function in the Painter object.
+ *
+ * @param beginPoint
+ * @param endPoint
+ * @param offset
+ * @param position
+ *
+ */
 function CurveLine(beginPoint, endPoint, offset, position = 'middle') {
     const auxLine = new Line(beginPoint, endPoint);
 
@@ -235,6 +255,24 @@ function CurveLine(beginPoint, endPoint, offset, position = 'middle') {
 
 } // end of curveLine
 
+/**
+ * Object representing a dart of a clothing design pattern.
+ * Darts are usually expressed (in pattern construction instructions) by their
+ * width and depth.
+ * To facilitate the creation of a dart, an initial approach to a line is made,
+ * since in the pattern creation instructions we only find the width and depth of the dart.
+ * How can we create a dart object with this information?
+ * From the starting point, the width and the degrees provided, we find the point where the
+ * dart will end. We construct a line between these points and calculate the midpoint of this
+ * obtained line. From this line we can now calculate where the deepest point of the dart is
+ * located, drawing a perpendicular from the point of the created line.
+ *
+ * @param beginPoint point where we start the construction of the dart
+ * @param width the width of the dart
+ * @param depth the depth of the dart
+ * @param degrees determine where the dart will aim
+ * 
+ */
 function Dart(beginPoint, width, depth, degrees = 0) {
     const dartWidthLine = new Line(beginPoint, width, degrees);
     const middlePoint = dartWidthLine.getMiddlePoint();
@@ -288,7 +326,54 @@ function Dart(beginPoint, width, depth, degrees = 0) {
 
 } // end of Dart
 
+function Label(point=new Point(0,0), position='b', text='', style='') {
 
+    this.setPoint = function(newPoint) {
+        point = newPoint;
+    };
+
+    this.getPoint = function() {
+        return point;
+    }
+
+    this.setPosition = function(newPosition) {
+        position = newPosition;
+    };
+
+    this.getPosition = function() {
+        return position;
+    };
+
+    this.setText = function(newText) {
+        text = newText;
+    };
+
+    this.getText = function() {
+        return text;
+    };
+
+    this.setStyle = function(newStyle) {
+        style = newStyle;
+    };
+
+    this.getStyle = function() {
+        return style;
+    };
+
+    this.getClass = function () {
+        return 'Label';
+    };
+}
+
+/**
+ * Object that is responsible for drawing or 'painting' the elements on the canvas.
+ * Represents a wrapper to manage the elements that define the patterns, that is:
+ * lines, points, darts, curved lines, etc.
+ * See: contextStylizers objects and the StylistHelper object
+ * @param canvasObj web page canvas object
+ * @param zoom value of the <select> object of the pattern web page form
+ * 
+ */
 function Painter(canvasObj, zoom) {
     'use strict';
     const ctx = canvasObj.getContext('2d' , { willReadFrequently: true});
@@ -507,6 +592,12 @@ function Painter(canvasObj, zoom) {
         ctx.fill();
     };
 
+    /**
+     * Draws the pattern object passed as a parameter.
+     * Note: a pattern is made up of different parts, for example, a shirt will be made up of a front, back and a sleeve.
+     * What would be passed as a parameter would be a 'Shirt' object and within the method each of the parts would be cycled through and drawn.
+     * @param objToDraw one of the existing pattern objects in the application
+     */
     this.drawObject = function(objToDraw) {
         let allThatMustBeDrawn = objToDraw.getDrawableObjects();
         let style = '';
@@ -514,6 +605,7 @@ function Painter(canvasObj, zoom) {
         let styleAuxiliaryLine = 'color:#99afbf;width:1;lineCap:round';
         let styleLine = 'color:#f4623a;width:3;lineCap:round';
         let stylePoint = 'color:#99afbf';
+        let styleLabel = 'color:#99afbf;font:30px sans-serif';
         let arrayOfPaintedPoints = [];
         let beginPointLabel = '';
         let endPointLabel = '';
@@ -523,7 +615,7 @@ function Painter(canvasObj, zoom) {
 
         // Each object can be made up of several patterns.
         // Example: in the case of a skirt there is a front pattern and a back pattern, but for a
-        // shirt we must include the sleeve pattern.
+        // shirt we must include the sleeve pattern too.
         for (let i = 0; i < allThatMustBeDrawn.length; i++) {
 
             for (const [key, value] of Object.entries(allThatMustBeDrawn[i])) {
@@ -567,11 +659,19 @@ function Painter(canvasObj, zoom) {
                 } else if (value.getClass() === "Dart") {
                     this.drawDart(value, styleLine);
                 } else if (value.getClass() === "Point") {
-                    this.drawPoint(value, stylePoint);
                     logger.debug(getPointName(key));
-                    let orientation = value.label.orientation;
-                    let labelValue = value.label.value;
-                    this.setLabelToPoint(labelValue, value, orientation);
+                    this.drawPoint(value, stylePoint);
+                    let label = value.getLabel();
+                    let labelValue = label.getText();
+                    if (labelValue !== undefined) {
+                        let position = label.getPosition();
+                        this.setLabelToPoint(labelValue, value, position);
+                    }
+                } else if (value.getClass() === "Label") {
+                    let point = value.getPoint();
+                    // set offset
+                    point.y = point.y + 50;
+                    this.setLabelToPoint(value.getText(), point, value.getPosition(), styleLabel);
                 }
             }
         }
@@ -580,7 +680,15 @@ function Painter(canvasObj, zoom) {
 
 } // end of Painter
 
-
+/**
+ * Auxiliary object to apply styles in CSS format to the elements used in the application.
+ * It wraps the way of working with CANVAS objects, allowing you to work with styles
+ * expressed as if it were the CSS 'style' element.
+ * @param ctx the context of CANVAS
+ * @param styleStr string that expresses a style to apply to a series of elements: font, text color, line style
+ *                 Example: 'width:3;color:aqua;pattern:[8,2];font:24px Georgia'
+ * 
+ */
 function ContextStylizer(ctx, styleStr = '') {
     const style = new StylistHelper(styleStr);
 
@@ -588,7 +696,6 @@ function ContextStylizer(ctx, styleStr = '') {
     const pattern = style.getPattern();
     const color = style.getColor();
     const lineCap = style.getLineCap();
-
 
     ctx.lineWidth = width;
     ctx.setLineDash(pattern);
@@ -604,6 +711,12 @@ function ContextStylizer(ctx, styleStr = '') {
 
 }
 
+/**
+ * Auxiliary object to apply styles to the labels of point objects.
+ * @param ctx Referring to the CANVAS context object
+ * @param styleStr Character string that expresses the style in CSS format (See StylistHelper)
+ * 
+ */
 function ContextStylizerText(ctx, styleStr = '') {
     const style = new StylistHelper(styleStr);
 
@@ -625,12 +738,16 @@ function ContextStylizerText(ctx, styleStr = '') {
 
 }
 
+/**
+ * Helper object to apply styles to point objects
+ * @param ctx Referring to the CANVAS context object
+ * @param styleStr Character string that expresses the style in CSS format (See StylistHelper)
+ * 
+ */
 function ContextStylizerPoint(ctx, styleStr = '') {
     const style = new StylistHelper(styleStr);
 
-    const color = style.getColor();
-
-    ctx.fillStyle = color;
+    ctx.fillStyle = style.getColor();
 
     this.reset = function () {
         ctx.fillStyle = 'black';
@@ -638,7 +755,14 @@ function ContextStylizerPoint(ctx, styleStr = '') {
 
 }
 
-// Example of Style --> 'width:3;color:aqua;pattern:[8,2];font:24px Georgia'
+/**
+ * Object that allows applying styles to the graphic elements of the patterns (lines, points, labels, etc.)
+ * The style you want to apply is defined as a text string, similar to what we would use in CSS:
+ * Example of Style --> 'width:3;color:aqua;pattern:[8,2];font:24px Georgia'
+ * There is a default style, in case a specific style is not specified for an element.
+ * @param styleStr string representing the style
+ * 
+ */
 function StylistHelper(styleStr = '') {
     const style = {
         width: 1, // ctx.lineWith = number;
@@ -648,6 +772,13 @@ function StylistHelper(styleStr = '') {
         lineCap: 'butt',
     };
 
+    /**
+     * Given a style element, for example 'color', the value of this element within the style string is returned.
+     * Example: if the style is 'width:3;color:aqua;pattern:[8,2];font:24px Georgia' and we ask for
+     * the element 'color' it will return 'aqua'
+     * @param element of the style of which we want to know its value
+     * @returns {string} value of the element
+     */
     this.getValue = function (element) {
         let value = '';
 
@@ -672,7 +803,10 @@ function StylistHelper(styleStr = '') {
 
     };
 
-
+    /**
+     * Gets the 'width' value from a style string
+     * @returns {number}
+     */
     this.getWidth = function () {
         let value = this.getValue('width');
 
@@ -685,6 +819,10 @@ function StylistHelper(styleStr = '') {
         return style.width;
     };
 
+    /**
+     * Gets the 'color' value from a style string
+     * @returns {number}
+     */
     this.getColor = function () {
         let value = this.getValue('color');
 
@@ -698,6 +836,10 @@ function StylistHelper(styleStr = '') {
 
     };
 
+    /**
+     * Gets the 'font' value from a style string
+     * @returns {number}
+     */
     this.getFont = function () {
         let value = this.getValue('font');
 
@@ -710,6 +852,11 @@ function StylistHelper(styleStr = '') {
         return style.font;
     };
 
+    /**
+     * Gets the 'pattern' value from a style string.
+     * The pattern is mainly used in creating dotted lines.
+     * @returns {number}
+     */
     this.getPattern = function () {
         const strPattern = this.getValue('pattern');
         let value = null;
@@ -725,6 +872,13 @@ function StylistHelper(styleStr = '') {
         return style.pattern;
     };
 
+    /**
+     * Gets the 'lineCap' value from a style string.
+     * The 'linecap' element of a style is part of the line style
+     * (referred to the canvas object) that defines what the ends
+     * of a line will be (rounded or not, for example).
+     * @returns {number}
+     */
     this.getLineCap = function () {
         let value = this.getValue('lineCap');
 
@@ -738,6 +892,12 @@ function StylistHelper(styleStr = '') {
     };
 
 
+    /**
+     * Auxiliary method to determine which pattern is defined for a line style.
+     * (See the getPattern method)
+     * @param str
+     * @returns {number[]}
+     */
     this.strToPattern = function (str) {
         let array = null;
         const aux = '';
@@ -764,6 +924,10 @@ function StylistHelper(styleStr = '') {
         return array;
     };
 
+    /**
+     * Gets the size of the font used in a style, expressed in pixels.
+     * @returns {number}
+     */
     this.getFontSize = function () {
         let size = 0;
         const indexOfPX = style.font.indexOf('px');

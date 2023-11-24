@@ -18,15 +18,19 @@
 </head>
 <body id="page-top">
 <!-- Navigation-->
-<nav class="navbar navbar-expand-lg shadow p-3 fixed-top py-3" id="secondaryNavBar" style="background-color: #655a53; color: #cac6c4">
-    <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="#page-top">JPattern</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+<nav class="navbar navbar-expand-sm navbar-light navbar-light bg-white fixed-top font-navbar px-3 shadow">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="../assets/img/sewing-machine.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+            <span class="px-2">JPattern</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                <li class="nav-item"><a class="nav-link" href="../index.html#home">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="../index.html#about">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="#body">Body</a></li>
+                <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#"><span class="link-active">Body</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="./skirt-pattern.html">Skirt</a></li>
                 <li class="nav-item"><a class="nav-link" href="./trousers-pattern.html">Pants</a></li>
             </ul>
@@ -34,7 +38,6 @@
     </div>
 </nav>
 <!-- Shirt -->
-<div class="pattern-page" id="shirt-page"></div>
 <section class="page-section" id="body">
     <br><br>
     <div class="container px-2 px-lg-3">
@@ -145,7 +148,7 @@
                 <input class="btn btn-primary" type="button" value="Build Pattern" onclick="draw('Shirt')">
             </div>
             <div class="col-auto  mb-2">
-                <input class="btn btn-outline-secondary" type="button" value="Download Pattern" id="btn-download_shirt" onclick="downloadImage('Shirt')">
+                <input class="btn btn-secondary" type="button" value="Download Pattern" id="btn-download_shirt" onclick="downloadImage('Shirt')">
             </div>
             <div class="col-auto mb-2">
                 <input class="btn btn-outline-success" type="button" value="Load Example" id="btn-load_skirt" onclick="loadExample('Shirt')">
@@ -203,8 +206,6 @@
 </footer>
 <!-- Bootstrap core JS-->
 <script src="../js/bootstrap.bundle.min.js"></script>
-<!-- Core theme JS-->
-<script src="../js/scripts.js"></script>
 <!-- JPatterns -->
 <script src="../js/jpattern.js"></script>
 <script src="../js/utilities.js"></script>
